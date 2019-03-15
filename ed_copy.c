@@ -4,12 +4,13 @@
 
 #include <signal.h>
 #include <setjmp.h>
+#include <string.h>
 
 /* make BLKSIZE and LBSIZE 512 for smaller machines */
 #define	BLKSIZE	4096
 #define	NBLK	2047
 
-#define	NULL	0
+//#define	NULL	0
 #define	FNSIZE	128
 #define	LBSIZE	4096
 #define	ESIZE	256
@@ -158,8 +159,9 @@ SIG_TYP	oldquit;
 #define	SIGHUP	1	/* hangup */
 #define	SIGQUIT	3	/* quit (ASCII FS) */
 
+#define MAXSIZE 500
 int main(int argc, char *argv[]) {
-	char *p1, *p2;
+	/*char *p1, *p2;
 	SIG_TYP oldintr;
 
 	oldquit = signal(SIGQUIT, SIG_IGN);
@@ -210,7 +212,17 @@ int main(int argc, char *argv[]) {
 		signal(SIGHUP, onhup);
 	setjmp(savej);
 	commands();
-	quit(0);
+	quit(0);*/
+	char buf[MAXSIZE];
+	memset(buf, 0, MAXSIZE * sizeof(char));
+	if (argc > 1) {
+    strcpy(buf, argv[1]);
+    for (int i = 2; i <= argc; ++i) {
+      strcat(buf, argv[i - 1]);
+    }
+  } else {
+		printf("Need more arguments\n");
+	}
 	return 0;
 }
 
