@@ -65,7 +65,6 @@ int	exit(int);
 int	wait(int *);
 int	unlink(char *);
 
-
 int	vflag	= 1;
 int	oflag;
 int	listf;
@@ -191,13 +190,13 @@ int main(int argc, char *argv[]) {
 	if (oflag) {
 		p1 = "/dev/stdout";
 		p2 = savedfile;
-		while (*p2++ = *p1++)
+		while ((*p2++ = *p1++))
 			;
 	}
 	if (argc>1) {
 		p1 = *argv;
 		p2 = savedfile;
-		while (*p2++ = *p1++)
+		while ((*p2++ = *p1++))
 			if (p2 >= &savedfile[sizeof(savedfile)])
 				p2--;
 		globp = "r";
@@ -596,7 +595,7 @@ void filename(int comm) {
 		if (*p1==0 && comm!='f')
 			error(Q);
 		p2 = file;
-		while (*p2++ = *p1++)
+		while ((*p2++ = *p1++))
 			;
 		return;
 	}
@@ -616,7 +615,7 @@ void filename(int comm) {
 	if (savedfile[0]==0 || comm=='e' || comm=='f') {
 		p1 = savedfile;
 		p2 = file;
-		while (*p1++ = *p2++)
+		while ((*p1++ = *p2++))
 			;
 	}
 }
@@ -678,7 +677,7 @@ void error(char *s) {
 
 int getchr(void) {
 	char c;
-	if (lastc=peekc) {
+	if ((lastc=peekc)) {
 		peekc = 0;
 		return(lastc);
 	}
@@ -697,7 +696,7 @@ int getchr(void) {
 int gettty(void) {
 	int rc;
 
-	if (rc = gety())
+	if ((rc = gety()))
 		return(rc);
 	if (linebuf[0]=='.' && linebuf[1]==0)
 		return(EOF);
@@ -736,12 +735,13 @@ int getfile(void) {
 	fp = nextip;
 	do {
 		if (--ninbuf < 0) {
-			if ((ninbuf = read(io, genbuf, LBSIZE)-1) < 0)
+			if ((ninbuf = read(io, genbuf, LBSIZE)-1) < 0) {
 				if (lp>linebuf) {
 					puts("'\\n' appended");
 					*genbuf = '\n';
 				}
 				else return(EOF);
+			}
 			fp = genbuf;
 			while(fp < &genbuf[ninbuf]) {
 				if (*fp++ & 0200)
@@ -906,8 +906,7 @@ void gdelete(void) {
 	fchange = 1;
 }
 
-char *
-getline(unsigned int tl) {
+char* getline(unsigned int tl) {
 	char *bp, *lp;
 	int nl;
 
@@ -915,7 +914,7 @@ getline(unsigned int tl) {
 	bp = getblock(tl, READ);
 	nl = nleft;
 	tl &= ~((BLKSIZE/2)-1);
-	while (*lp++ = *bp++)
+	while ((*lp++ = *bp++))
 		if (--nl == 0) {
 			bp = getblock(tl+=(BLKSIZE/2), READ);
 			nl = nleft;
@@ -934,7 +933,7 @@ int putline(void) {
 	bp = getblock(tl, WRITE);
 	nl = nleft;
 	tl &= ~((BLKSIZE/2)-1);
-	while (*bp = *lp++) {
+	while ((*bp = *lp++)) {
 		if (*bp++ == '\n') {
 			*--bp = 0;
 			linebp = lp;
@@ -950,8 +949,7 @@ int putline(void) {
 	return(nl);
 }
 
-char *
-getblock(unsigned int atl, int iof) {
+char* getblock(unsigned int atl, int iof) {
 	int bno, off;
 
 	bno = (atl/(BLKSIZE/2));
@@ -1066,13 +1064,13 @@ void join(void) {
 	gp = genbuf;
 	for (a1=addr1; a1<=addr2; a1++) {
 		lp = getline(*a1);
-		while (*gp = *lp++)
+		while ((*gp = *lp++))
 			if (gp++ >= &genbuf[LBSIZE-2])
 				error(Q);
 	}
 	lp = linebuf;
 	gp = genbuf;
-	while (*lp++ = *gp++)
+	while ((*lp++ = *gp++))
 		;
 	*addr1 = putline();
 	if (addr1<addr2)
@@ -1171,7 +1169,7 @@ int getsub(void) {
 	p1 = linebuf;
 	if ((p2 = linebp) == 0)
 		return(EOF);
-	while (*p1++ = *p2++)
+	while ((*p1++ = *p2++))
 		;
 	linebp = 0;
 	return(0);
@@ -1186,7 +1184,7 @@ void dosub(void) {
 	rp = rhsbuf;
 	while (lp < loc1)
 		*sp++ = *lp++;
-	while (c = *rp++&0377) {
+	while ((c = *rp++&0377)) {
 		if (c=='&') {
 			sp = place(sp, loc1, loc2);
 			continue;
@@ -1200,17 +1198,16 @@ void dosub(void) {
 	}
 	lp = loc2;
 	loc2 = sp - genbuf + linebuf;
-	while (*sp++ = *lp++)
+	while ((*sp++ = *lp++))
 		if (sp >= &genbuf[LBSIZE])
 			error(Q);
 	lp = linebuf;
 	sp = genbuf;
-	while (*lp++ = *sp++)
+	while ((*lp++ = *sp++))
 		;
 }
 
-char *
-place(char *sp, char *l1, char *l2) {
+char* place(char *sp, char *l1, char *l2) {
 	while (l1 < l2) {
 		*sp++ = *l1++;
 		if (sp >= &genbuf[LBSIZE])
@@ -1498,11 +1495,11 @@ int advance(char *lp, char *ep) {
 		return(0);
 
 	case CBRA:
-		braslist[*ep++] = lp;
+		braslist[(unsigned char)*ep++] = lp;
 		continue;
 
 	case CKET:
-		braelist[*ep++] = lp;
+		braelist[(unsigned char)*ep++] = lp;
 		continue;
 
 	case CBACK:

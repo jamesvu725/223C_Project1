@@ -61,7 +61,7 @@ int	write(int, char*, int);
 int	close(int);
 int	fork(void);
 int	execl(char *, ...);
-int	exit_(int);
+int	exit(int);
 int	wait(int *);
 int	unlink(char *);
 
@@ -98,8 +98,8 @@ unsigned nlall = 128;
 
 char	*mkstemp(char *);
 char	tmpXXXXX[50] = "/tmp/eXXXXX";
-char	*malloc_(int);
-char	*realloc_(char *, int);
+char	*malloc(int);
+char	*realloc(char *, int);
 
 char *getblock(unsigned int atl, int iof);
 char *getline(unsigned int tl);
@@ -202,7 +202,7 @@ int main(int argc, char *argv[]) {
 				p2--;
 		globp = "r";
 	}
-	zero = (unsigned *)malloc_(nlall*sizeof(unsigned));
+	zero = (unsigned *)malloc(nlall*sizeof(unsigned));
 	tfname = mkstemp(tmpXXXXX);
 	init();
 	if (oldintr!=SIG_IGN)
@@ -811,7 +811,7 @@ int append(int (*f)(void), unsigned int *a) {
 			unsigned *ozero = zero;
 
 			nlall += 1024;
-			if ((zero = (unsigned *)realloc_((char *)zero, nlall*sizeof(unsigned)))==NULL) {
+			if ((zero = (unsigned *)realloc((char *)zero, nlall*sizeof(unsigned)))==NULL) {
 				error("MEM?");
 				onhup(0);
 			}
@@ -850,7 +850,7 @@ void callunix(void) {
 		signal(SIGHUP, oldhup);
 		signal(SIGQUIT, oldquit);
 		execl("/bin/sh", "sh", "-t", 0);
-		exit_(0100);
+		exit(0100);
 	}
 	savint = signal(SIGINT, SIG_IGN);
 	while ((rpid = wait(&retcode)) != pid && rpid != -1)
@@ -867,7 +867,7 @@ void quit(int n) {
 		error(Q);
 	}
 	unlink(tfname);
-	exit_(0);
+	exit(0);
 }
 
 void rdelete(unsigned int *ad1, unsigned int *ad2) {
