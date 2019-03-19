@@ -8,3 +8,7 @@ all:
 	make clean
 	make compile
 	make test
+gitstuff:
+	git status
+	git add .
+	git commit

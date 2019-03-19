@@ -194,21 +194,21 @@ void commands(void) {
 		addr1 = addr2;
 	switch(c) {
 
-	case 'a':
-		add(0);
-		continue;
+	// case 'a':
+	// 	add(0);
+	// 	continue;
 
 	case 'c':
 		nonzero();
 		newline();
-		rdelete(addr1, addr2);
+		// rdelete(addr1, addr2);
 		append(gettty, addr1-1);
 		continue;
 
 	case 'd':
 		nonzero();
 		newline();
-		rdelete(addr1, addr2);
+		// rdelete(addr1, addr2);
 		continue;
 
 	case 'E':
@@ -235,9 +235,9 @@ void commands(void) {
 		global(1);
 		continue;
 
-	case 'i':
-		add(-1);
-		continue;
+	// case 'i':
+	// 	add(-1);
+	// 	continue;
 
 
 	// case 'j':
@@ -366,9 +366,9 @@ void commands(void) {
 		putchr('\n');
 		continue;
 
-	case '!':
-		callunix();
-		continue;
+	// case '!':
+	// 	callunix();
+	// 	continue;
 
 	case EOF:
 		return;
@@ -766,36 +766,36 @@ int append(int (*f)(void), unsigned int *a) {
 	return(nline);
 }
 
-void add(int i) {
-	if (i && (given || dol>zero)) {
-		addr1--;
-		addr2--;
-	}
-	squeeze(0);
-	newline();
-	append(gettty, addr2);
-}
+// void add(int i) {
+// 	if (i && (given || dol>zero)) {
+// 		addr1--;
+// 		addr2--;
+// 	}
+// 	squeeze(0);
+// 	newline();
+// 	append(gettty, addr2);
+// }
 
-void callunix(void) {
-	SIG_TYP savint;
-	int pid, rpid;
-	int retcode;
-
-	setnoaddr();
-	if ((pid = fork()) == 0) {
-		signal(SIGHUP, oldhup);
-		signal(SIGQUIT, oldquit);
-		execl("/bin/sh", "sh", "-t", 0);
-		exit(0100);
-	}
-	savint = signal(SIGINT, SIG_IGN);
-	while ((rpid = wait(&retcode)) != pid && rpid != -1)
-		;
-	signal(SIGINT, savint);
-	if (vflag) {
-		puts("!");
-	}
-}
+// void callunix(void) {
+// 	SIG_TYP savint;
+// 	int pid, rpid;
+// 	int retcode;
+//
+// 	setnoaddr();
+// 	if ((pid = fork()) == 0) {
+// 		signal(SIGHUP, oldhup);
+// 		signal(SIGQUIT, oldquit);
+// 		execl("/bin/sh", "sh", "-t", 0);
+// 		exit(0100);
+// 	}
+// 	savint = signal(SIGINT, SIG_IGN);
+// 	while ((rpid = wait(&retcode)) != pid && rpid != -1)
+// 		;
+// 	signal(SIGINT, savint);
+// 	if (vflag) {
+// 		puts("!");
+// 	}
+// }
 
 void quit(int n) {
 	if (vflag && fchange && dol!=zero) {
@@ -806,22 +806,22 @@ void quit(int n) {
 	exit(0);
 }
 
-void rdelete(unsigned int *ad1, unsigned int *ad2) {
-	unsigned int *a1, *a2, *a3;
-
-	a1 = ad1;
-	a2 = ad2+1;
-	a3 = dol;
-	dol -= a2 - a1;
-	do {
-		*a1++ = *a2++;
-	} while (a2 <= a3);
-	a1 = ad1;
-	if (a1 > dol)
-		a1 = dol;
-	dot = a1;
-	fchange = 1;
-}
+// void rdelete(unsigned int *ad1, unsigned int *ad2) {
+// 	unsigned int *a1, *a2, *a3;
+//
+// 	a1 = ad1;
+// 	a2 = ad2+1;
+// 	a3 = dol;
+// 	dol -= a2 - a1;
+// 	do {
+// 		*a1++ = *a2++;
+// 	} while (a2 <= a3);
+// 	a1 = ad1;
+// 	if (a1 > dol)
+// 		a1 = dol;
+// 	dot = a1;
+// 	fchange = 1;
+// }
 
 // void gdelete(void) {
 // 	unsigned int *a1, *a2, *a3;
