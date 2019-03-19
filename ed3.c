@@ -412,8 +412,7 @@ void print(void) {
 	pflag = 0;
 }
 
-unsigned int *
-address(void) {
+unsigned int* address(void) {
 	int sign;
 	unsigned int *a, *b;
 	int opcnt, nextopand;
@@ -859,8 +858,7 @@ void gdelete(void) {
 	fchange = 1;
 }
 
-char *
-getline(unsigned int tl) {
+char* getline(unsigned int tl) {
 	char *bp, *lp;
 	int nl;
 
@@ -903,8 +901,7 @@ int putline(void) {
 	return(nl);
 }
 
-char *
-getblock(unsigned int atl, int iof) {
+char* getblock(unsigned int atl, int iof) {
 	int bno, off;
 
 	bno = (atl/(BLKSIZE/2));
@@ -1162,8 +1159,7 @@ void dosub(void) {
 		;
 }
 
-char *
-place(char *sp, char *l1, char *l2) {
+char* place(char *sp, char *l1, char *l2) {
 	while (l1 < l2) {
 		*sp++ = *l1++;
 		if (sp >= &genbuf[LBSIZE])
