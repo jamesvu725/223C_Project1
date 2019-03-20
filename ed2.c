@@ -362,7 +362,7 @@ void commands(void) {
 		squeeze(0);
 		newline();
 		count = addr2 - zero;
-		putd();
+		// putd();
 		putchr('\n');
 		continue;
 
@@ -386,7 +386,7 @@ void print(void) {
 	do {
 		if (listn) {
 			count = a1-zero;
-			putd();
+			// putd();
 			putchr('\t');
 		}
 		puts(getline(*a1++));
@@ -561,7 +561,7 @@ void exfile(void) {
 	close(io);
 	io = -1;
 	if (vflag) {
-		putd();
+		// putd();
 		putchr('\n');
 	}
 }
@@ -1515,24 +1515,24 @@ int cclass(char *set, int c, int af) {
 		if (*set++ == c)
 			return(af);
 	return(!af);
-}
+} //Need for regex
 
-void putd(void) {
-	int r;
+// void putd(void) {
+// 	int r;
+//
+// 	r = count%10;
+// 	count /= 10;
+// 	if (count)
+// 		putd();
+// 	putchr(r + '0');
+// }
 
-	r = count%10;
-	count /= 10;
-	if (count)
-		putd();
-	putchr(r + '0');
-}
-
-void puts(char *sp) {
-	col = 0;
-	while (*sp)
-		putchr(*sp++);
-	putchr('\n');
-}
+// void puts(char *sp) {
+// 	col = 0;
+// 	while (*sp)
+// 		putchr(*sp++);
+// 	putchr('\n');
+// }
 
 char	line[70];
 char	*linp	= line;
@@ -1580,4 +1580,4 @@ void putchr(int ac) {
 		return;
 	}
 	linp = lp;
-}
+} // Need

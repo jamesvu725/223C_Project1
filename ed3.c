@@ -335,7 +335,7 @@ void commands(void) {
 		squeeze(0);
 		newline();
 		count = addr2 - zero;
-		putd();
+		// putd();
 		putchr('\n');
 		continue;
 
@@ -355,7 +355,7 @@ void print(void) {
 	do {
 		if (listn) {
 			count = a1-zero;
-			putd();
+			// putd();
 			putchr('\t');
 		}
 		puts(getline(*a1++));
@@ -530,7 +530,7 @@ void exfile(void) {
 	close(io);
 	io = -1;
 	if (vflag) {
-		putd();
+		// putd();
 		putchr('\n');
 	}
 }
@@ -733,7 +733,7 @@ int append(int (*f)(void), unsigned int *a) {
 		*rdot = tl;
 	}
 	return(nline);
-}
+} // need
 
 void quit(int n) {
 	if (vflag && fchange && dol!=zero) {
@@ -742,7 +742,7 @@ void quit(int n) {
 	}
 	unlink(tfname);
 	exit(0);
-}
+} // can remove but can't use q to quit
 
 char* getline(unsigned int tl) {
 	char *bp, *lp;
@@ -758,7 +758,7 @@ char* getline(unsigned int tl) {
 			nl = nleft;
 		}
 	return(linebuf);
-}
+} // need
 
 int putline(void) {
 	char *bp, *lp;
@@ -785,7 +785,7 @@ int putline(void) {
 	nl = tline;
 	tline += (((lp-linebuf)+03)>>1)&077776;
 	return(nl);
-}
+} // need
 
 char* getblock(unsigned int atl, int iof) {
 	int bno, off;
@@ -815,14 +815,14 @@ char* getblock(unsigned int atl, int iof) {
 		blkio(oblock, obuff, write);
 	oblock = bno;
 	return(obuff+off);
-}
+} //need for getline
 
 void blkio(int b, char *buf, int (*iofcn)(int, char*, int)) {
 	lseek(tfile, (long)b*BLKSIZE, 0);
 	if ((*iofcn)(tfile, buf, BLKSIZE) != BLKSIZE) {
 		error(T);
 	}
-}
+} //need for getblock
 
 void init(void) {
 	int *markp;
@@ -839,7 +839,7 @@ void init(void) {
 	close(creat(tfname, 0600));
 	tfile = open(tfname, 2);
 	dot = dol = zero;
-}
+} // need
 
 void global(int k) {
 	char *gp;
@@ -885,7 +885,7 @@ void global(int k) {
 			a1 = zero;
 		}
 	}
-}
+} // need
 
 void compile(int eof) {
 	int c;
@@ -1019,7 +1019,7 @@ void compile(int eof) {
 	expbuf[0] = 0;
 	nbra = 0;
 	error(Q);
-}
+} // need
 
 int execute(unsigned int *addr) {
 	char *p1, *p2;
@@ -1063,7 +1063,7 @@ int execute(unsigned int *addr) {
 		}
 	} while (*p1++);
 	return(0);
-}
+} // Need
 
 int advance(char *lp, char *ep) {
 	char *curlp;
@@ -1160,7 +1160,7 @@ int advance(char *lp, char *ep) {
 	default:
 		error(Q);
 	}
-}
+} // Need
 
 int cclass(char *set, int c, int af) {
 	int n;
@@ -1172,24 +1172,7 @@ int cclass(char *set, int c, int af) {
 		if (*set++ == c)
 			return(af);
 	return(!af);
-}
-
-void putd(void) {
-	int r;
-
-	r = count%10;
-	count /= 10;
-	if (count)
-		putd();
-	putchr(r + '0');
-}
-
-void puts(char *sp) {
-	col = 0;
-	while (*sp)
-		putchr(*sp++);
-	putchr('\n');
-}
+} // Need for regex
 
 char	line[70];
 char	*linp	= line;
@@ -1237,4 +1220,4 @@ void putchr(int ac) {
 		return;
 	}
 	linp = lp;
-}
+} //Need
