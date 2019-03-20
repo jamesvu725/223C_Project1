@@ -97,9 +97,8 @@ SIG_TYP	oldquit;
 #define	SIGHUP	1	/* hangup */
 #define	SIGQUIT	3	/* quit (ASCII FS) */
 
-#define MAXSIZE 500
 int main(int argc, char *argv[]) {
-	/*char *p1, *p2;
+	char *p1, *p2;
 	SIG_TYP oldintr;
 
 	oldquit = signal(SIGQUIT, SIG_IGN);
@@ -150,20 +149,20 @@ int main(int argc, char *argv[]) {
 		signal(SIGHUP, onhup);
 	setjmp(savej);
 	commands();
-	quit(0);*/
-	char buf[MAXSIZE];
-	memset(buf, 0, MAXSIZE * sizeof(char));
-	if (argc > 1) {
-    strcpy(buf, argv[1]);
-    for (int i = 2; i <= argc; ++i) {
-      strcat(buf, argv[i - 1]);
-    }
-		if (argc > 3) {
-
-		}
-  } else {
-		printf("Need more arguments\n");
-	}
+	quit(0);
+	// char buf[MAXSIZE];
+	// memset(buf, 0, MAXSIZE * sizeof(char));
+	// if (argc > 1) {
+  //   strcpy(buf, argv[1]);
+  //   for (int i = 2; i <= argc; ++i) {
+  //     strcat(buf, argv[i - 1]);
+  //   }
+	// 	if (argc > 3) {
+	//
+	// 	}
+  // } else {
+	// 	printf("Need more arguments\n");
+	// }
 	return 0;
 }
 
