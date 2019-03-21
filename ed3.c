@@ -131,7 +131,6 @@ int main(int argc, char *argv[]) {
 void commands(void) {
 	unsigned int *a1;
 	int c;
-	int temp;
 	char lastsep;
 
 	for (;;) {
@@ -170,17 +169,6 @@ void commands(void) {
 		addr1 = addr2;
 	switch(c) {
 
-	// case 'c': //
-	// 	newline();
-	// 	continue;
-
-	// case 'd'://
-	// 	newline();
-	// 	continue;
-
-	// case 'E':
-	// 	fchange = 0;
-	// 	c = 'e';
 	case 'e'://need
 		if (vflag && fchange) {
 			fchange = 0;
@@ -191,55 +179,17 @@ void commands(void) {
 		addr2 = zero;
 		goto caseread;
 
-	// case 'f':
-	// 	filename(c);
-	// 	puts(savedfile);
-	// 	continue;
-
 	case 'g': //need
 		global(1);
 		continue;
 
-	// case 'k':
-	// 	if ((c = getchr()) < 'a' || c > 'z')
-	// 		error(Q);
-	// 	newline();
-	// 	names[c-'a'] = *addr2 & ~01;
-	// 	anymarks |= 01;
-	// 	continue;
-
-	// case 'n':
-	// 	listn++;
-	// 	newline();
-	// 	print();
-	// 	continue;
-
-	case '\n':
-		if (a1==0) {
-			a1 = dot+1;
-			addr2 = a1;
-			addr1 = a1;
-		}
-		if (lastsep==';')
-			addr1 = a1;
-		print();
-		continue;
-
-	case 'l':
-		listf++;
-	case 'p':
+	case 'p': //need
 	case 'P':
 		newline();
 		print();
 		continue;
 
-	case 'Q':
-		fchange = 0;
-	case 'q':
-		newline();
-		quit(0);
-
-	case 'r':
+	case 'r': //need
 		filename(c);
 	caseread:
 		if ((io = open(file, 0)) < 0) {
@@ -251,41 +201,6 @@ void commands(void) {
 		c = zero != dol;
 		append(getfile, addr2);
 		fchange = c;
-		continue;
-
-	case 'u':
-		newline();
-		if ((*addr2&~01) != subnewa)
-			error(Q);
-		*addr2 = subolda;
-		dot = addr2;
-		continue;
-
-	case 'v':
-		global(0);
-		continue;
-
-	case 'W':
-		wrapp++;
-	case 'w':
-		setwide();
-		if ((temp = getchr()) != 'q' && temp != 'Q') {
-			peekc = temp;
-			temp = 0;
-		}
-		filename(c);
-		if(!wrapp ||
-		  ((io = open(file,1)) == -1) ||
-		  ((lseek(io, 0L, 2)) == -1))
-			if ((io = creat(file, 0666)) < 0)
-				error(file);
-		wrapp = 0;
-		if (addr1<=zero+1 && addr2==dol)
-			fchange = 0;
-		if (temp == 'Q')
-			fchange = 0;
-		if (temp)
-			quit(0);
 		continue;
 
 	case '=':
