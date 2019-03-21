@@ -2,7 +2,7 @@
  * Editor
  */
 
-#include <signal.h>
+// #include <signal.h>
 #include <setjmp.h>
 #include "ed.h"
 
@@ -89,22 +89,22 @@ char	tmpXXXXX[50] = "/tmp/eXXXXX";
 
 jmp_buf	savej;
 
-typedef void	(*SIG_TYP)(int);
-SIG_TYP	oldhup;
-SIG_TYP	oldquit;
+// typedef void	(*SIG_TYP)(int);
+// SIG_TYP	oldhup;
+// SIG_TYP	oldquit;
 /* these two are not in ansi, but we need them */
-#define	SIGHUP	1	/* hangup */
-#define	SIGQUIT	3	/* quit (ASCII FS) */
+// #define	SIGHUP	1	/* hangup */
+// #define	SIGQUIT	3	/* quit (ASCII FS) */
 
 int main(int argc, char *argv[]) {
 	char *p1, *p2;
-	SIG_TYP oldintr;
+	// SIG_TYP oldintr;
 
-	oldquit = signal(SIGQUIT, SIG_IGN);
-	oldhup = signal(SIGHUP, SIG_IGN);
-	oldintr = signal(SIGINT, SIG_IGN);
-	if (signal(SIGTERM, SIG_IGN) == SIG_DFL)
-		signal(SIGTERM, quit);
+	// oldquit = signal(SIGQUIT, SIG_IGN);
+	// oldhup = signal(SIGHUP, SIG_IGN);
+	// oldintr = signal(SIGINT, SIG_IGN);
+	// if (signal(SIGTERM, SIG_IGN) == SIG_DFL)
+	// 	signal(SIGTERM, quit);
 	argv++;
 	while (argc > 1 && **argv=='-') {
 		switch((*argv)[1]) {
@@ -113,10 +113,10 @@ int main(int argc, char *argv[]) {
 			vflag = 0;
 			break;
 
-		case 'q':
-			signal(SIGQUIT, SIG_DFL);
-			vflag = 1;
-			break;
+		// case 'q':
+		// 	signal(SIGQUIT, SIG_DFL);
+		// 	vflag = 1;
+		// 	break;
 
 		case 'o':
 			oflag = 1;
@@ -142,10 +142,10 @@ int main(int argc, char *argv[]) {
 	zero = (unsigned *)malloc(nlall*sizeof(unsigned));
 	tfname = mkstemp(tmpXXXXX);
 	init();
-	if (oldintr!=SIG_IGN)
-		signal(SIGINT, onintr);
-	if (oldhup!=SIG_IGN)
-		signal(SIGHUP, onhup);
+	// if (oldintr!=SIG_IGN)
+	// 	signal(SIGINT, onintr);
+	// if (oldhup!=SIG_IGN)
+	// 	signal(SIGHUP, onhup);
 	setjmp(savej);
 	commands();
 	quit(0);
@@ -199,14 +199,14 @@ void commands(void) {
 	// 	continue;
 
 	case 'c':
-		nonzero();
+		// nonzero();
 		newline();
 		// rdelete(addr1, addr2);
-		append(gettty, addr1-1);
+		// append(gettty, addr1-1);
 		continue;
 
 	case 'd':
-		nonzero();
+		// nonzero();
 		newline();
 		// rdelete(addr1, addr2);
 		continue;
@@ -215,7 +215,7 @@ void commands(void) {
 		fchange = 0;
 		c = 'e';
 	case 'e':
-		setnoaddr();
+		// setnoaddr();
 		if (vflag && fchange) {
 			fchange = 0;
 			error(Q);
@@ -226,7 +226,7 @@ void commands(void) {
 		goto caseread;
 
 	case 'f':
-		setnoaddr();
+		// setnoaddr();
 		filename(c);
 		puts(savedfile);
 		continue;
@@ -248,7 +248,7 @@ void commands(void) {
 	// 	continue;
 
 	case 'k':
-		nonzero();
+		// nonzero();
 		if ((c = getchr()) < 'a' || c > 'z')
 			error(Q);
 		newline();
@@ -288,7 +288,7 @@ void commands(void) {
 	case 'Q':
 		fchange = 0;
 	case 'q':
-		setnoaddr();
+		// setnoaddr();
 		newline();
 		quit(0);
 
@@ -300,25 +300,25 @@ void commands(void) {
 			error(file);
 		}
 		setwide();
-		squeeze(0);
+		// squeeze(0);
 		ninbuf = 0;
 		c = zero != dol;
 		append(getfile, addr2);
-		exfile();
+		// exfile();
 		fchange = c;
 		continue;
 
-	case 's':
-		nonzero();
+	// case 's':
+	// 	nonzero();
 		// substitute(globp!=0);
-		continue;
+		// continue;
 
 	// case 't':
 	// 	move(1);
 	// 	continue;
 
 	case 'u':
-		nonzero();
+		// nonzero();
 		newline();
 		if ((*addr2&~01) != subnewa)
 			error(Q);
@@ -334,7 +334,7 @@ void commands(void) {
 		wrapp++;
 	case 'w':
 		setwide();
-		squeeze(dol>zero);
+		// squeeze(dol>zero);
 		if ((temp = getchr()) != 'q' && temp != 'Q') {
 			peekc = temp;
 			temp = 0;
@@ -346,9 +346,9 @@ void commands(void) {
 			if ((io = creat(file, 0666)) < 0)
 				error(file);
 		wrapp = 0;
-		if (dol > zero)
-			putfile();
-		exfile();
+		// if (dol > zero)
+		// 	putfile();
+		// exfile();
 		if (addr1<=zero+1 && addr2==dol)
 			fchange = 0;
 		if (temp == 'Q')
@@ -359,7 +359,7 @@ void commands(void) {
 
 	case '=':
 		setwide();
-		squeeze(0);
+		// squeeze(0);
 		newline();
 		count = addr2 - zero;
 		// putd();
@@ -381,7 +381,7 @@ void commands(void) {
 void print(void) {
 	unsigned int *a1;
 
-	nonzero();
+	// nonzero();
 	a1 = addr1;
 	do {
 		if (listn) {
@@ -413,7 +413,7 @@ unsigned int* address(void) {
 			peekc = c;
 			if (!opcnt)
 				a = zero;
-			a += sign*getnum();
+			// a += sign*getnum();
 		} else switch (c) {
 		case '$':
 			a = dol;
@@ -473,15 +473,15 @@ unsigned int* address(void) {
 	return 0;
 }
 
-int getnum(void) {
-	int r, c;
-
-	r = 0;
-	while ((c=getchr())>='0' && c<='9')
-		r = r*10 + c - '0';
-	peekc = c;
-	return (r);
-}
+// int getnum(void) {
+// 	int r, c;
+//
+// 	r = 0;
+// 	while ((c=getchr())>='0' && c<='9')
+// 		r = r*10 + c - '0';
+// 	peekc = c;
+// 	return (r);
+// }
 
 void setwide(void) {
 	if (!given) {
@@ -490,19 +490,19 @@ void setwide(void) {
 	}
 }
 
-void setnoaddr(void) {
-	if (given)
-		error(Q);
-}
+// void setnoaddr(void) {
+// 	if (given)
+// 		error(Q);
+// }
 
-void nonzero(void) {
-	squeeze(1);
-}
-
-void squeeze(int i) {
-	if (addr1<zero+i || addr2>dol || addr1>addr2)
-		error(Q);
-}
+// void nonzero(void) {
+// 	squeeze(1);
+// }
+//
+// void squeeze(int i) {
+// 	if (addr1<zero+i || addr2>dol || addr1>addr2)
+// 		error(Q);
+// }
 
 void newline(void) {
 	int c;
@@ -557,35 +557,35 @@ void filename(int comm) {
 	}
 }
 
-void exfile(void) {
-	close(io);
-	io = -1;
-	if (vflag) {
-		// putd();
-		putchr('\n');
-	}
-}
+// void exfile(void) {
+// 	close(io);
+// 	io = -1;
+// 	if (vflag) {
+// 		// putd();
+// 		putchr('\n');
+// 	}
+// }
 
-void onintr(int n) {
-	signal(SIGINT, onintr);
-	putchr('\n');
-	lastc = '\n';
-	error(Q);
-}
+// void onintr(int n) {
+// 	signal(SIGINT, onintr);
+// 	putchr('\n');
+// 	lastc = '\n';
+// 	error(Q);
+// }
 
-void onhup(int n) {
-	signal(SIGINT, SIG_IGN);
-	signal(SIGHUP, SIG_IGN);
-	if (dol > zero) {
-		addr1 = zero+1;
-		addr2 = dol;
-		io = creat("ed.hup", 0600);
-		if (io > 0)
-			putfile();
-	}
-	fchange = 0;
-	quit(0);
-}
+// void onhup(int n) {
+// 	signal(SIGINT, SIG_IGN);
+// 	signal(SIGHUP, SIG_IGN);
+// 	if (dol > zero) {
+// 		addr1 = zero+1;
+// 		addr2 = dol;
+// 		io = creat("ed.hup", 0600);
+// 		// if (io > 0)
+// 		// 	putfile();
+// 	}
+// 	fchange = 0;
+// 	quit(0);
+// }
 
 void error(char *s) {
 	int c;
@@ -630,39 +630,39 @@ int getchr(void) {
 	return(lastc);
 }
 
-int gettty(void) {
-	int rc;
+// int gettty(void) {
+// 	// int rc;
+// 	//
+// 	// if ((rc = gety()))
+// 	// 	return(rc);
+// 	if (linebuf[0]=='.' && linebuf[1]==0)
+// 		return(EOF);
+// 	return(0);
+// }
 
-	if ((rc = gety()))
-		return(rc);
-	if (linebuf[0]=='.' && linebuf[1]==0)
-		return(EOF);
-	return(0);
-}
-
-int gety(void) {
-	int c;
-	char *gf;
-	char *p;
-
-	p = linebuf;
-	gf = globp;
-	while ((c = getchr()) != '\n') {
-		if (c==EOF) {
-			if (gf)
-				peekc = c;
-			return(c);
-		}
-		if ((c &= 0177) == 0)
-			continue;
-		*p++ = c;
-		if (p >= &linebuf[LBSIZE-2])
-			error(Q);
-	}
-
-	*p++ = 0;
-	return(0);
-}
+// int gety(void) {
+// 	int c;
+// 	char *gf;
+// 	char *p;
+//
+// 	p = linebuf;
+// 	gf = globp;
+// 	while ((c = getchr()) != '\n') {
+// 		if (c==EOF) {
+// 			if (gf)
+// 				peekc = c;
+// 			return(c);
+// 		}
+// 		if ((c &= 0177) == 0)
+// 			continue;
+// 		*p++ = c;
+// 		if (p >= &linebuf[LBSIZE-2])
+// 			error(Q);
+// 	}
+//
+// 	*p++ = 0;
+// 	return(0);
+// }
 
 int getfile(void) {
 	int c;
@@ -701,40 +701,40 @@ int getfile(void) {
 	return(0);
 }
 
-void putfile(void) {
-	unsigned int *a1;
-	int n;
-	char *fp, *lp;
-	int nib;
-
-	nib = BLKSIZE;
-	fp = genbuf;
-	a1 = addr1;
-	do {
-		lp = getline(*a1++);
-		for (;;) {
-			if (--nib < 0) {
-				n = fp-genbuf;
-				if(write(io, genbuf, n) != n) {
-					puts(WRERR);
-					error(Q);
-				}
-				nib = BLKSIZE-1;
-				fp = genbuf;
-			}
-			count++;
-			if ((*fp++ = *lp++) == 0) {
-				fp[-1] = '\n';
-				break;
-			}
-		}
-	} while (a1 <= addr2);
-	n = fp-genbuf;
-	if(write(io, genbuf, n) != n) {
-		puts(WRERR);
-		error(Q);
-	}
-}
+// void putfile(void) {
+// 	unsigned int *a1;
+// 	int n;
+// 	char *fp, *lp;
+// 	int nib;
+//
+// 	nib = BLKSIZE;
+// 	fp = genbuf;
+// 	a1 = addr1;
+// 	do {
+// 		lp = getline(*a1++);
+// 		for (;;) {
+// 			if (--nib < 0) {
+// 				n = fp-genbuf;
+// 				if(write(io, genbuf, n) != n) {
+// 					puts(WRERR);
+// 					error(Q);
+// 				}
+// 				nib = BLKSIZE-1;
+// 				fp = genbuf;
+// 			}
+// 			count++;
+// 			if ((*fp++ = *lp++) == 0) {
+// 				fp[-1] = '\n';
+// 				break;
+// 			}
+// 		}
+// 	} while (a1 <= addr2);
+// 	n = fp-genbuf;
+// 	if(write(io, genbuf, n) != n) {
+// 		puts(WRERR);
+// 		error(Q);
+// 	}
+// }
 
 int append(int (*f)(void), unsigned int *a) {
 	unsigned int *a1, *a2, *rdot;
@@ -749,7 +749,7 @@ int append(int (*f)(void), unsigned int *a) {
 			nlall += 1024;
 			if ((zero = (unsigned *)realloc((char *)zero, nlall*sizeof(unsigned)))==NULL) {
 				error("MEM?");
-				onhup(0);
+				// onhup(0);
 			}
 			dot += zero - ozero;
 			dol += zero - ozero;
@@ -949,7 +949,7 @@ void global(int k) {
 	if (globp)
 		error(Q);
 	setwide();
-	squeeze(dol>zero);
+	// squeeze(dol>zero);
 	if ((c=getchr())=='\n')
 		error(Q);
 	compile(c);

@@ -2,7 +2,6 @@
  * Editor
  */
 
-#include <signal.h>
 #include <setjmp.h>
 #include "ed.h"
 
@@ -89,33 +88,14 @@ char	tmpXXXXX[50] = "/tmp/eXXXXX";
 
 jmp_buf	savej;
 
-typedef void	(*SIG_TYP)(int);
-SIG_TYP	oldhup;
-SIG_TYP	oldquit;
-/* these two are not in ansi, but we need them */
-#define	SIGHUP	1	/* hangup */
-#define	SIGQUIT	3	/* quit (ASCII FS) */
-
 int main(int argc, char *argv[]) {
 	char *p1, *p2;
-	SIG_TYP oldintr;
-
-	oldquit = signal(SIGQUIT, SIG_IGN);
-	oldhup = signal(SIGHUP, SIG_IGN);
-	oldintr = signal(SIGINT, SIG_IGN);
-	if (signal(SIGTERM, SIG_IGN) == SIG_DFL)
-		signal(SIGTERM, quit);
 	argv++;
 	while (argc > 1 && **argv=='-') {
 		switch((*argv)[1]) {
 
 		case '\0':
 			vflag = 0;
-			break;
-
-		case 'q':
-			signal(SIGQUIT, SIG_DFL);
-			vflag = 1;
 			break;
 
 		case 'o':
@@ -142,15 +122,11 @@ int main(int argc, char *argv[]) {
 	zero = (unsigned *)malloc(nlall*sizeof(unsigned));
 	tfname = mkstemp(tmpXXXXX);
 	init();
-	if (oldintr!=SIG_IGN)
-		signal(SIGINT, onintr);
-	if (oldhup!=SIG_IGN)
-		signal(SIGHUP, onhup);
 	setjmp(savej);
 	commands();
 	quit(0);
 	return 0;
-}
+} //need
 
 void commands(void) {
 	unsigned int *a1;
@@ -194,22 +170,18 @@ void commands(void) {
 		addr1 = addr2;
 	switch(c) {
 
-	case 'c': //
-		nonzero();
-		newline();
-		append(gettty, addr1-1);
-		continue;
+	// case 'c': //
+	// 	newline();
+	// 	continue;
 
-	case 'd'://
-		nonzero();
-		newline();
-		continue;
+	// case 'd'://
+	// 	newline();
+	// 	continue;
 
-	case 'E':
-		fchange = 0;
-		c = 'e';
-	case 'e':
-		setnoaddr();
+	// case 'E':
+	// 	fchange = 0;
+	// 	c = 'e';
+	case 'e'://need
 		if (vflag && fchange) {
 			fchange = 0;
 			error(Q);
@@ -219,30 +191,28 @@ void commands(void) {
 		addr2 = zero;
 		goto caseread;
 
-	case 'f':
-		setnoaddr();
-		filename(c);
-		puts(savedfile);
-		continue;
+	// case 'f':
+	// 	filename(c);
+	// 	puts(savedfile);
+	// 	continue;
 
-	case 'g':
+	case 'g': //need
 		global(1);
 		continue;
 
-	case 'k':
-		nonzero();
-		if ((c = getchr()) < 'a' || c > 'z')
-			error(Q);
-		newline();
-		names[c-'a'] = *addr2 & ~01;
-		anymarks |= 01;
-		continue;
+	// case 'k':
+	// 	if ((c = getchr()) < 'a' || c > 'z')
+	// 		error(Q);
+	// 	newline();
+	// 	names[c-'a'] = *addr2 & ~01;
+	// 	anymarks |= 01;
+	// 	continue;
 
-	case 'n':
-		listn++;
-		newline();
-		print();
-		continue;
+	// case 'n':
+	// 	listn++;
+	// 	newline();
+	// 	print();
+	// 	continue;
 
 	case '\n':
 		if (a1==0) {
@@ -266,7 +236,6 @@ void commands(void) {
 	case 'Q':
 		fchange = 0;
 	case 'q':
-		setnoaddr();
 		newline();
 		quit(0);
 
@@ -278,20 +247,13 @@ void commands(void) {
 			error(file);
 		}
 		setwide();
-		squeeze(0);
 		ninbuf = 0;
 		c = zero != dol;
 		append(getfile, addr2);
-		exfile();
 		fchange = c;
 		continue;
 
-	case 's'://
-		nonzero();
-		continue;
-
 	case 'u':
-		nonzero();
 		newline();
 		if ((*addr2&~01) != subnewa)
 			error(Q);
@@ -307,7 +269,6 @@ void commands(void) {
 		wrapp++;
 	case 'w':
 		setwide();
-		squeeze(dol>zero);
 		if ((temp = getchr()) != 'q' && temp != 'Q') {
 			peekc = temp;
 			temp = 0;
@@ -319,9 +280,6 @@ void commands(void) {
 			if ((io = creat(file, 0666)) < 0)
 				error(file);
 		wrapp = 0;
-		if (dol > zero)
-			putfile();
-		exfile();
 		if (addr1<=zero+1 && addr2==dol)
 			fchange = 0;
 		if (temp == 'Q')
@@ -332,7 +290,6 @@ void commands(void) {
 
 	case '=':
 		setwide();
-		squeeze(0);
 		newline();
 		count = addr2 - zero;
 		// putd();
@@ -345,12 +302,11 @@ void commands(void) {
 	}
 	error(Q);
 	}
-}
+} // need
 
 void print(void) {
 	unsigned int *a1;
 
-	nonzero();
 	a1 = addr1;
 	do {
 		if (listn) {
@@ -364,7 +320,7 @@ void print(void) {
 	listf = 0;
 	listn = 0;
 	pflag = 0;
-}
+} //need
 
 unsigned int* address(void) {
 	int sign;
@@ -382,7 +338,6 @@ unsigned int* address(void) {
 			peekc = c;
 			if (!opcnt)
 				a = zero;
-			a += sign*getnum();
 		} else switch (c) {
 		case '$':
 			a = dol;
@@ -440,38 +395,14 @@ unsigned int* address(void) {
 	error(Q);
 	/*NOTREACHED*/
 	return 0;
-}
-
-int getnum(void) {
-	int r, c;
-
-	r = 0;
-	while ((c=getchr())>='0' && c<='9')
-		r = r*10 + c - '0';
-	peekc = c;
-	return (r);
-}
+} //need
 
 void setwide(void) {
 	if (!given) {
 		addr1 = zero + (dol>zero);
 		addr2 = dol;
 	}
-}
-
-void setnoaddr(void) {
-	if (given)
-		error(Q);
-}
-
-void nonzero(void) {
-	squeeze(1);
-}
-
-void squeeze(int i) {
-	if (addr1<zero+i || addr2>dol || addr1>addr2)
-		error(Q);
-}
+} //need
 
 void newline(void) {
 	int c;
@@ -488,7 +419,7 @@ void newline(void) {
 			return;
 	}
 	error(Q);
-}
+}//need
 
 void filename(int comm) {
 	char *p1, *p2;
@@ -524,37 +455,7 @@ void filename(int comm) {
 		while ((*p1++ = *p2++))
 			;
 	}
-}
-
-void exfile(void) {
-	close(io);
-	io = -1;
-	if (vflag) {
-		// putd();
-		putchr('\n');
-	}
-}
-
-void onintr(int n) {
-	signal(SIGINT, onintr);
-	putchr('\n');
-	lastc = '\n';
-	error(Q);
-}
-
-void onhup(int n) {
-	signal(SIGINT, SIG_IGN);
-	signal(SIGHUP, SIG_IGN);
-	if (dol > zero) {
-		addr1 = zero+1;
-		addr2 = dol;
-		io = creat("ed.hup", 0600);
-		if (io > 0)
-			putfile();
-	}
-	fchange = 0;
-	quit(0);
-}
+}//need
 
 void error(char *s) {
 	int c;
@@ -579,7 +480,7 @@ void error(char *s) {
 		io = -1;
 	}
 	longjmp(savej, 1);
-}
+}//need
 
 int getchr(void) {
 	char c;
@@ -597,41 +498,7 @@ int getchr(void) {
 		return(lastc = EOF);
 	lastc = c&0177;
 	return(lastc);
-}
-
-int gettty(void) {
-	int rc;
-
-	if ((rc = gety()))
-		return(rc);
-	if (linebuf[0]=='.' && linebuf[1]==0)
-		return(EOF);
-	return(0);
-}
-
-int gety(void) {
-	int c;
-	char *gf;
-	char *p;
-
-	p = linebuf;
-	gf = globp;
-	while ((c = getchr()) != '\n') {
-		if (c==EOF) {
-			if (gf)
-				peekc = c;
-			return(c);
-		}
-		if ((c &= 0177) == 0)
-			continue;
-		*p++ = c;
-		if (p >= &linebuf[LBSIZE-2])
-			error(Q);
-	}
-
-	*p++ = 0;
-	return(0);
-}
+}//need
 
 int getfile(void) {
 	int c;
@@ -668,42 +535,7 @@ int getfile(void) {
 	*--lp = 0;
 	nextip = fp;
 	return(0);
-}
-
-void putfile(void) {
-	unsigned int *a1;
-	int n;
-	char *fp, *lp;
-	int nib;
-
-	nib = BLKSIZE;
-	fp = genbuf;
-	a1 = addr1;
-	do {
-		lp = getline(*a1++);
-		for (;;) {
-			if (--nib < 0) {
-				n = fp-genbuf;
-				if(write(io, genbuf, n) != n) {
-					puts(WRERR);
-					error(Q);
-				}
-				nib = BLKSIZE-1;
-				fp = genbuf;
-			}
-			count++;
-			if ((*fp++ = *lp++) == 0) {
-				fp[-1] = '\n';
-				break;
-			}
-		}
-	} while (a1 <= addr2);
-	n = fp-genbuf;
-	if(write(io, genbuf, n) != n) {
-		puts(WRERR);
-		error(Q);
-	}
-}
+} //need
 
 int append(int (*f)(void), unsigned int *a) {
 	unsigned int *a1, *a2, *rdot;
@@ -718,7 +550,6 @@ int append(int (*f)(void), unsigned int *a) {
 			nlall += 1024;
 			if ((zero = (unsigned *)realloc((char *)zero, nlall*sizeof(unsigned)))==NULL) {
 				error("MEM?");
-				onhup(0);
 			}
 			dot += zero - ozero;
 			dol += zero - ozero;
@@ -850,7 +681,6 @@ void global(int k) {
 	if (globp)
 		error(Q);
 	setwide();
-	squeeze(dol>zero);
 	if ((c=getchr())=='\n')
 		error(Q);
 	compile(c);

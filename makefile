@@ -8,3 +8,6 @@ all:
 	make clean
 	make compile
 	make test
+
+testran:
+	./ed random.txt
