@@ -124,7 +124,6 @@ int main(int argc, char *argv[]) {
 	init();
 	setjmp(savej);
 	commands();
-	quit(0);
 	return 0;
 } //need
 
@@ -146,8 +145,8 @@ void commands(void) {
 		c = getchr();
 		if (c!=',' && c!=';')
 			break;
-		if (lastsep==',')
-			error(Q);
+		// if (lastsep==',')
+		// 	error(Q);
 		if (a1==0) {
 			a1 = zero+1;
 			if (a1>dol)
@@ -172,7 +171,7 @@ void commands(void) {
 	case 'e'://need
 		if (vflag && fchange) {
 			fchange = 0;
-			error(Q);
+			// error(Q);
 		}
 		filename(c);
 		init();
@@ -206,7 +205,7 @@ void commands(void) {
 	case EOF: //need
 		return;
 	}
-	error(Q);
+	// error(Q);
 	}
 } // need
 
@@ -249,13 +248,13 @@ unsigned int* address(void) {
 			a = dol;
 			/* fall through */
 		case '.':
-			if (opcnt)
-				error(Q);
+			// if (opcnt)
+			// 	error(Q);
 			break;
 		case '\'':
 			c = getchr();
-			if (opcnt || c<'a' || 'z'<c)
-				error(Q);
+			// if (opcnt || c<'a' || 'z'<c)
+			// 	error(Q);
 			a = zero;
 			do a++; while (a<=dol && names[c-'a']!=(*a&~01));
 			break;
@@ -273,8 +272,8 @@ unsigned int* address(void) {
 					a = zero;
 				if (execute(a))
 					break;
-				if (a==b)
-					error(Q);
+				// if (a==b)
+				// 	error(Q);
 			}
 			break;
 		default:
@@ -298,7 +297,7 @@ unsigned int* address(void) {
 		sign = 1;
 		opcnt++;
 	} while (zero<=a && a<=dol);
-	error(Q);
+	// error(Q);
 	/*NOTREACHED*/
 	return 0;
 } //need
@@ -324,7 +323,7 @@ void newline(void) {
 		if ((c=getchr())=='\n')
 			return;
 	}
-	error(Q);
+	// error(Q);
 }//need
 
 void filename(int comm) {
@@ -335,23 +334,23 @@ void filename(int comm) {
 	c = getchr();
 	if (c=='\n' || c==EOF) {
 		p1 = savedfile;
-		if (*p1==0 && comm!='f')
-			error(Q);
+		// if (*p1==0 && comm!='f')
+		// 	error(Q);
 		p2 = file;
 		while ((*p2++ = *p1++))
 			;
 		return;
 	}
-	if (c!=' ')
-		error(Q);
+	// if (c!=' ')
+	// 	error(Q);
 	while ((c = getchr()) == ' ')
 		;
-	if (c=='\n')
-		error(Q);
+	// if (c=='\n')
+	// 	error(Q);
 	p1 = file;
 	do {
-		if (p1 >= &file[sizeof(file)-1] || c==' ' || c==EOF)
-			error(Q);
+		// if (p1 >= &file[sizeof(file)-1] || c==' ' || c==EOF)
+		// 	error(Q);
 		*p1++ = c;
 	} while ((c = getchr()) != '\n');
 	*p1++ = 0;
@@ -432,8 +431,8 @@ int getfile(void) {
 		if (c=='\0')
 			continue;
 		if (c&0200 || lp >= &linebuf[LBSIZE]) {
-			lastc = '\n';
-			error(Q);
+			// lastc = '\n';
+			// error(Q);
 		}
 		*lp++ = c;
 		count++;
@@ -471,15 +470,6 @@ int append(int (*f)(void), unsigned int *a) {
 	}
 	return(nline);
 } // need
-
-void quit(int n) {
-	if (vflag && fchange && dol!=zero) {
-		fchange = 0;
-		error(Q);
-	}
-	unlink(tfname);
-	exit(0);
-} // can remove but can't use q to quit
 
 char* getline(unsigned int tl) {
 	char *bp, *lp;
@@ -584,24 +574,24 @@ void global(int k) {
 	unsigned int *a1;
 	char globuf[GBSIZE];
 
-	if (globp)
-		error(Q);
+	// if (globp)
+	// 	error(Q);
 	setwide();
 	if ((c=getchr())=='\n')
 		error(Q);
 	compile(c);
 	gp = globuf;
 	while ((c = getchr()) != '\n') {
-		if (c==EOF)
-			error(Q);
+		// if (c==EOF)
+		// 	error(Q);
 		if (c=='\\') {
 			c = getchr();
 			if (c!='\n')
 				*gp++ = '\\';
 		}
 		*gp++ = c;
-		if (gp >= &globuf[GBSIZE-2])
-			error(Q);
+		// if (gp >= &globuf[GBSIZE-2])
+		// 	error(Q);
 	}
 	if (gp == globuf)
 		*gp++ = 'p';
@@ -637,8 +627,8 @@ void compile(int eof) {
 		c = eof;
 	}
 	if (c == eof) {
-		if (*ep==0)
-			error(Q);
+		// if (*ep==0)
+		// 	error(Q);
 		return;
 	}
 	nbra = 0;
@@ -754,7 +744,7 @@ void compile(int eof) {
    cerror:
 	expbuf[0] = 0;
 	nbra = 0;
-	error(Q);
+	// error(Q);
 } // need
 
 int execute(unsigned int *addr) {
@@ -849,8 +839,8 @@ int advance(char *lp, char *ep) {
 		continue;
 
 	case CBACK://
-		if (braelist[i = *ep++]==0)
-			error(Q);
+		// if (braelist[i = *ep++]==0)
+		// 	error(Q);
 		return(0);
 
 	case CBACK|STAR://
@@ -893,8 +883,8 @@ int advance(char *lp, char *ep) {
 		} while (lp > curlp);
 		return(0);
 
-	default:
-		error(Q);
+	// default:
+		// error(Q);
 	}
 } // Need
 
