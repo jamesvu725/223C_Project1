@@ -1,13 +1,10 @@
 clean:
 	rm -f ed
 compile:
-	gcc -o ed ed5.c -w
+	gcc -o ed edgrep.c
 test:
-	./ed rj.txt
+	./ed < test.txt
 all:
 	make clean
 	make compile
 	make test
-
-testran:
-	./ed random.txt

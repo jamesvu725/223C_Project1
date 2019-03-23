@@ -5,12 +5,30 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
+#include "edgrep.h"
 
-const int BLKSIZE = 4096;  const int NBLK = 2047;  const int FNSIZE = 128;  const int LBSIZE = 4096;
-const int ESIZE = 256; const int GBSIZE = 256;  const int NBRA = 5;  const int KSIZE = 9;  const int CBRA = 1;
-const int CCHR = 2;  const int CDOT = 4;  const int CCL = 6;  const int NCCL = 8;  const int CDOL = 10;
-const int CEOF = 11;  const int CKET = 12;  const int CBACK = 14;  const int CCIRC = 15;  const int STAR = 01;
-const int READ = 0;  const int WRITE = 1;  /* const int EOF = -1; */
+#define BLKSIZE 4096
+#define NBLK 2047
+#define FNSIZE 128
+#define LBSIZE 4096
+#define ESIZE 256
+#define GBSIZE 256
+#define NBRA 5
+#define KSIZE 9
+#define CBRA 1
+#define CCHR 2
+#define CDOT 4
+#define CCL 6
+#define NCCL 8
+#define CDOL 10
+#define CEOF 11
+#define CKET 12
+#define CBACK 14
+#define CCIRC 15
+#define STAR 01
+#define READ 0
+#define WRITE 1  /* #define EOF = -1; */
+
 
 int  peekc, lastc, given, ninbuf, io, pflag;
 int  vflag  = 1, oflag, listf, listn, col, tfile  = -1, tline, iblock  = -1, oblock  = -1, ichanged, nleft;
@@ -22,22 +40,8 @@ char  Q[] = "", T[] = "TMP", savedfile[FNSIZE], file[FNSIZE], linebuf[LBSIZE], r
 char  genbuf[LBSIZE], *nextip, *linebp, *globp, *mktemp(char *), tmpXXXXX[50] = "/tmp/eXXXXX";
 char  *tfname, *loc1, *loc2, ibuff[BLKSIZE], obuff[BLKSIZE], WRERR[]  = "WRITE ERROR", *braslist[NBRA], *braelist[NBRA];
 char  line[70];  char  *linp  = line;
-void commands(void); void add(int i);  unsigned int *address(void);  int advance(char *lp, char *ep);
-int append(int (*f)(void), unsigned int *a);  int backref(int i, char *lp);
-void blkio(int b, char *buf, long (*iofcn)(int, void*, unsigned long));  void callunix(void);
-int cclass(char *set, int c, int af);  void compile(int eof);
-int compsub(void);  void dosub(void);  void error(char *s);  int execute(unsigned int *addr);  void exfile(void);
-void filename(int comm);  void gdelete(void);  char *getblock(unsigned int atl, int iof); int getchr(void);
-int getcopy(void);  int getfile(void);  char *getline_blk(unsigned int tl);  int getnum(void);  int getsub(void);
-int gettty(void);  int gety(void);  void global(int k);  void init(void);
-void join(void);  void move_(int cflag);  void newline(void);  void nonzero(void);  void onhup(int n);
-void onintr(int n);  char *place(char *sp, char *l1, char *l2);  void print(void);  void putchr_(int ac);
-void putd(void);  void putfile(void);  int putline(void);  void puts_(char *sp); void quit(int n);
-void rdelete(unsigned int *ad1, unsigned int *ad2);  void reverse(unsigned int *a1, unsigned int *a2);
-void setwide(void);  void setnoaddr(void);  void squeeze(int);  void substitute(int inglob);
 jmp_buf  savej;
 char grepbuf[GBSIZE];
-void greperror(char);  void grepline(void);
 
 typedef void  (*SIG_TYP)(int);
 SIG_TYP  oldhup, oldquit;  //const int SIGHUP = 1;  /* hangup */   const int SIGQUIT = 3;  /* quit (ASCII FS) */
@@ -63,7 +67,7 @@ int main(int argc, char *argv[]) {  char *p1, *p2;  SIG_TYP oldintr;  oldquit = 
   commands();
   quit(0);  return 0;
 }
-void commands(void) {  unsigned int *a1;  int c, temp;  char lastsep;
+void commands(void) {  unsigned int *a1;  int c/*, temp*/;  char lastsep;
   for (;;) {
     if (pflag) { pflag = 0;  addr1 = addr2 = dot;  print(); }  c = '\n';
     for (addr1 = 0;;) {
@@ -88,7 +92,7 @@ void commands(void) {  unsigned int *a1;  int c, temp;  char lastsep;
                  ninbuf = 0;  c = zero != dol;
         append(getfile, addr2);  exfile();  fchange = c; continue;
     case 'z':  grepline();  continue;
-        
+
     case 'a':  /* add(0);  continue; */  // fallthrough
     case 'c':  /* nonzero(); newline(); rdelete(addr1,addr2); append(gettty, addr1-1); continue; */  // fallthrough
     case 'd':  /* nonzero();  newline();  rdelete(addr1,addr2);  continue; */  // fallthrough
@@ -107,7 +111,7 @@ void commands(void) {  unsigned int *a1;  int c, temp;  char lastsep;
     case 'u':  /* nonzero();  newline(); if ((*addr2&~01) != subnewa) { error(Q); }  *addr2 = subolda;
                 dot = addr2; continue; */  // fallthrough
     case 'v':  /* global(0);  continue;  // falthrough
-    case 'W':  /* wrapp++;  case 'w': setwide();  squeeze(dol > zero);
+    case 'W':   wrapp++;  case 'w': setwide();  squeeze(dol > zero);
       if ((temp = getchr()) != 'q' && temp != 'Q') { peekc = temp;  temp = 0; } filename(c);
       if (!wrapp || ((io = open(file, 1)) == -1) || lseek(io, 0L, 2) == -1) {
         if ((io = creat(file, 0666)) < 0) { error(file); } }  wrapp = 0;
@@ -117,7 +121,7 @@ void commands(void) {  unsigned int *a1;  int c, temp;  char lastsep;
                // fallthrough
     case '!':  /* callunix();  continue; */  // fallthrough
     default:  // fallthrough
-    caseGrepError:  greperror(c);  continue;
+    /*caseGrepError:  */greperror(c);  continue;
     }  error(Q);
   }
 }
@@ -159,8 +163,8 @@ int advance(char *lp, char *ep) {  char *curlp;  int i;
       case CEOF:  loc2 = lp;  return(1);
       case CCL:   if (cclass(ep, *lp++, 1)) {  ep += *ep;  continue; }  return(0);
       case NCCL:  if (cclass(ep, *lp++, 0)) { ep += *ep;  continue; }  return(0);
-      case CBRA:  braslist[*ep++] = lp;  continue;
-      case CKET:  braelist[*ep++] = lp;  continue;
+      case CBRA:  braslist[(unsigned)*ep++] = lp;  continue;
+      case CKET:  braelist[(unsigned)*ep++] = lp;  continue;
       case CBACK:
         if (braelist[i = *ep++] == 0) { error(Q); }
         if (backref(i, lp)) { lp += braelist[i] - braslist[i];  continue; }  return(0);

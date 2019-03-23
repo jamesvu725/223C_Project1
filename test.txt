@@ -1,26 +1,14 @@
-e rings.txt
+e rj.txt
 ,p
+z
 1,5
 z
-g/ing
+g/ife
 z
-g/or
+g/[1-9]
 z
-a
-c
-d
-f
-i
-j
-k
-l
-m
-n
-r
-t
-u
-v
-W
+g/^[A-D]
 z
-q
-
+g/s$
+z
+g/.
