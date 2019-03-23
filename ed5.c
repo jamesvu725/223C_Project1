@@ -212,7 +212,6 @@ void print(void) {
 	do {
 		if (listn) {
 			count = a1-zero;
-			// putd();
 			putchr('\t');
 		}
 		puts(getline(*a1++));
@@ -243,7 +242,6 @@ unsigned int* address(void) {
 		case '$':
 			a = dol;
 			/* fall through */
-		case '.':
 			break;
 		case '\'':
 			c = getchr();
@@ -596,9 +594,6 @@ void compile(int eof) {
 		peekc = c;
 		c = eof;
 	}
-	if (c == eof) {
-		return;
-	}
 	nbra = 0;
 	if (c=='^') {
 		c = getchr();
@@ -804,9 +799,6 @@ int advance(char *lp, char *ep) {
 	case CKET:
 		braelist[(unsigned char)*ep++] = lp;
 		continue;
-
-	case CBACK://
-		return(0);
 
 	case CBACK|STAR://
 		if (braelist[i = *ep++] == 0)

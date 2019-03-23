@@ -1,7 +1,7 @@
 clean:
 	rm -f ed
 compile:
-	gcc -o ed ed4.c -w
+	gcc -o ed ed5.c -w
 test:
 	./ed rj.txt
 all:

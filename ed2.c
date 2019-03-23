@@ -171,8 +171,8 @@ void commands(void) {
 		c = getchr();
 		if (c!=',' && c!=';')
 			break;
-		if (lastsep==',')
-			error(Q);
+		// if (lastsep==',')
+		// 	error(Q);
 		if (a1==0) {
 			a1 = zero+1;
 			if (a1>dol)
@@ -218,7 +218,7 @@ void commands(void) {
 		// setnoaddr();
 		if (vflag && fchange) {
 			fchange = 0;
-			error(Q);
+			// error(Q);
 		}
 		filename(c);
 		init();
@@ -374,7 +374,7 @@ void commands(void) {
 		return;
 
 	}
-	error(Q);
+	// error(Q);
 	}
 }
 
@@ -418,14 +418,14 @@ unsigned int* address(void) {
 		case '$':
 			a = dol;
 			/* fall through */
-		case '.':
-			if (opcnt)
-				error(Q);
+		// case '.':
+			// if (opcnt)
+				// error(Q);
 			break;
 		case '\'':
 			c = getchr();
-			if (opcnt || c<'a' || 'z'<c)
-				error(Q);
+			// if (opcnt || c<'a' || 'z'<c)
+			// 	error(Q);
 			a = zero;
 			do a++; while (a<=dol && names[c-'a']!=(*a&~01));
 			break;
@@ -443,8 +443,8 @@ unsigned int* address(void) {
 					a = zero;
 				if (execute(a))
 					break;
-				if (a==b)
-					error(Q);
+				// if (a==b)
+				// 	error(Q);
 			}
 			break;
 		default:
@@ -468,7 +468,7 @@ unsigned int* address(void) {
 		sign = 1;
 		opcnt++;
 	} while (zero<=a && a<=dol);
-	error(Q);
+	// error(Q);
 	/*NOTREACHED*/
 	return 0;
 }
@@ -518,7 +518,7 @@ void newline(void) {
 		if ((c=getchr())=='\n')
 			return;
 	}
-	error(Q);
+	// error(Q);
 }
 
 void filename(int comm) {
@@ -529,23 +529,23 @@ void filename(int comm) {
 	c = getchr();
 	if (c=='\n' || c==EOF) {
 		p1 = savedfile;
-		if (*p1==0 && comm!='f')
-			error(Q);
+		// if (*p1==0 && comm!='f')
+		// 	error(Q);
 		p2 = file;
 		while ((*p2++ = *p1++))
 			;
 		return;
 	}
-	if (c!=' ')
-		error(Q);
+	// if (c!=' ')
+	// 	error(Q);
 	while ((c = getchr()) == ' ')
 		;
 	if (c=='\n')
 		error(Q);
 	p1 = file;
 	do {
-		if (p1 >= &file[sizeof(file)-1] || c==' ' || c==EOF)
-			error(Q);
+		// if (p1 >= &file[sizeof(file)-1] || c==' ' || c==EOF)
+		// 	error(Q);
 		*p1++ = c;
 	} while ((c = getchr()) != '\n');
 	*p1++ = 0;
@@ -691,7 +691,7 @@ int getfile(void) {
 			continue;
 		if (c&0200 || lp >= &linebuf[LBSIZE]) {
 			lastc = '\n';
-			error(Q);
+			// error(Q);
 		}
 		*lp++ = c;
 		count++;
@@ -946,8 +946,8 @@ void global(int k) {
 	unsigned int *a1;
 	char globuf[GBSIZE];
 
-	if (globp)
-		error(Q);
+	// if (globp)
+	// 	error(Q);
 	setwide();
 	// squeeze(dol>zero);
 	if ((c=getchr())=='\n')
@@ -955,16 +955,16 @@ void global(int k) {
 	compile(c);
 	gp = globuf;
 	while ((c = getchr()) != '\n') {
-		if (c==EOF)
-			error(Q);
+		// if (c==EOF)
+		// 	error(Q);
 		if (c=='\\') {
 			c = getchr();
 			if (c!='\n')
 				*gp++ = '\\';
 		}
 		*gp++ = c;
-		if (gp >= &globuf[GBSIZE-2])
-			error(Q);
+		// if (gp >= &globuf[GBSIZE-2])
+		// 	error(Q);
 	}
 	if (gp == globuf)
 		*gp++ = 'p';
@@ -1227,11 +1227,11 @@ void compile(int eof) {
 		peekc = c;
 		c = eof;
 	}
-	if (c == eof) {
-		if (*ep==0)
-			error(Q);
-		return;
-	}
+	// if (c == eof) {
+	// 	// if (*ep==0)
+	// 	// 	error(Q);
+	// 	return;
+	// }
 	nbra = 0;
 	if (c=='^') {
 		c = getchr();
@@ -1345,7 +1345,7 @@ void compile(int eof) {
    cerror:
 	expbuf[0] = 0;
 	nbra = 0;
-	error(Q);
+	// error(Q);
 }
 
 int execute(unsigned int *addr) {
@@ -1439,14 +1439,14 @@ int advance(char *lp, char *ep) {
 		braelist[(unsigned char)*ep++] = lp;
 		continue;
 
-	case CBACK:
-		if (braelist[i = *ep++]==0)
-			error(Q);
+	// case CBACK:
+		// if (braelist[i = *ep++]==0)
+		// 	error(Q);
 		// if (backref(i, lp)) {
 		// 	lp += braelist[i] - braslist[i];
 		// 	continue;
 		// }
-		return(0);
+		// return(0);
 
 	case CBACK|STAR:
 		if (braelist[i = *ep++] == 0)
@@ -1490,8 +1490,8 @@ int advance(char *lp, char *ep) {
 		} while (lp > curlp);
 		return(0);
 
-	default:
-		error(Q);
+	// default:
+	// 	error(Q);
 	}
 }
 
