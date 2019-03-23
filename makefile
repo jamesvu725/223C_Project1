@@ -1,9 +1,9 @@
 clean:
-	rm -f ed
+	rm -f ed edgrep
 compile:
-	gcc -o ed edgrep1.c
+	gcc -o edgrep edgrep2.c
 test:
-	./ed < test.txt
+	./edgrep < test.txt
 all:
 	make clean
 	make compile
