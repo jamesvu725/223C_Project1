@@ -1,4 +1,3 @@
-#include <signal.h> // signal
 #include <setjmp.h> // jmp_buf, setjmp, longjmp
 #include <unistd.h> // write, read, lseek, close, unlink
 #include <stdio.h> // EOF, snprintf
@@ -43,16 +42,12 @@ char  line[70];  char  *linp  = line;
 jmp_buf  savej;
 char grepbuf[GBSIZE];
 
-typedef void  (*SIG_TYP)(int);
-SIG_TYP  oldhup, oldquit;  //const int SIGHUP = 1;  /* hangup */   const int SIGQUIT = 3;  /* quit (ASCII FS) */
 
-int main(int argc, char *argv[]) {  char *p1, *p2;  SIG_TYP oldintr;  oldquit = signal(SIGQUIT, SIG_IGN);
-  oldhup = signal(SIGHUP, SIG_IGN);  oldintr = signal(SIGINT, SIG_IGN);
-  if (signal(SIGTERM, SIG_IGN) == SIG_DFL) { signal(SIGTERM, quit); }  argv++;
+int main(int argc, char *argv[]) {  char *p1, *p2;
   while (argc > 1 && **argv=='-') {
     switch((*argv)[1]) {
     case '\0': vflag = 0;  break;
-    case 'q': signal(SIGQUIT, SIG_DFL);  vflag = 1;  break;
+    vflag = 1;  break;
     case 'o': oflag = 1;  break;
     }
     argv++;  argc--;
@@ -62,7 +57,6 @@ int main(int argc, char *argv[]) {  char *p1, *p2;  SIG_TYP oldintr;  oldquit = 
     while ((*p2++ = *p1++) == 1) {  if (p2 >= &savedfile[sizeof(savedfile)]) { p2--; }  }  globp = "r";
   }
   zero = (unsigned *)malloc(nlall * sizeof(unsigned));  tfname = mktemp(tmpXXXXX);  init();
-  if (oldintr!=SIG_IGN) { signal(SIGINT, onintr); }  if (oldhup!=SIG_IGN) { signal(SIGHUP, onhup); }
   setjmp(savej);
   commands();
   quit(0);  return 0;
@@ -184,7 +178,7 @@ int advance(char *lp, char *ep) {  char *curlp;  int i;
 int append(int (*f)(void), unsigned int *a) {  unsigned int *a1, *a2, *rdot;  int nline, tl;  nline = 0;  dot = a;
   while ((*f)() == 0) {
     if ((dol-zero)+1 >= nlall) {  unsigned *ozero = zero;  nlall += 1024;
-      if ((zero = (unsigned *)realloc((char *)zero, nlall*sizeof(unsigned)))==NULL) {  error("MEM?");  onhup(0);  }
+      if ((zero = (unsigned *)realloc((char *)zero, nlall*sizeof(unsigned)))==NULL) {  error("MEM?"); }
       dot += zero - ozero;  dol += zero - ozero;
     }
     tl = putline();  nline++;  a1 = ++dol;  a2 = a1+1;  rdot = ++dot;
@@ -414,12 +408,6 @@ void newline(void) {  int c;  if ((c = getchr()) == '\n' || c == EOF) { return; 
   }  error(Q);
 }
 void nonzero(void) { squeeze(1); }
-void onhup(int n) {
-  signal(SIGINT, SIG_IGN);  signal(SIGHUP, SIG_IGN);
-  if (dol > zero) {  addr1 = zero+1;  addr2 = dol;  io = creat("ed.hup", 0600);  if (io > 0) { putfile(); } }
-  fchange = 0;  quit(0);
-}
-void onintr(int n) { signal(SIGINT, onintr);  putchr_('\n');  lastc = '\n';  error(Q);  }
 //char* place(char *sp, char *l1, char *l2) {
 //  while (l1 < l2) { *sp++ = *l1++;  if (sp >= &genbuf[LBSIZE]) { error(Q); } }  return(sp);
 //}
