@@ -20,7 +20,7 @@ void commands(void) {  unsigned int *a1;  int c;
     case EOF:  return; //need
     case 'e':  filename(c);  init(); goto caseread; // need
     case 'g':  global(1);  continue; // need
-    case 'p':  case 'P':  newline();  print();  continue; //need to print out message
+    case 'p':  case 'P':  getchr();  print();  continue; //need to print out message
     caseread:
         io = open((const char*)file, 0); setwide(); append(getfile, addr2);
         continue;
@@ -163,7 +163,6 @@ void init(void) {
   subnewa = 0;  anymarks = 0;  iblock = -1;  oblock = -1;  ichanged = 0;
   close(creat(tfname, 0600));  tfile = open(tfname, 2);  dot = dol = zero;  memset(inputbuf, 0, sizeof(inputbuf));
 }
-void newline(void) {  getchr(); }
 void print(void) {  unsigned int *a1 = addr1;
   do { puts_(getline_blk(*a1++)); } while (a1 <= addr2);
 }
