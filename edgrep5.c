@@ -22,21 +22,20 @@ int main(int argc, char *argv[]) {
   commands();
   quit(0);  return 0;
 }
-void commands(void) {  unsigned int *a1;  int c;  char lastsep;
+void commands(void) {  unsigned int *a1;  int c;
   for (;;) {
     c = '\n';
     for (addr1 = 0;;) {
-      lastsep = c;  a1 = address();  c = getchr();
-      if (c != ',' && c != ';') { break; }  if (lastsep==',') { error(Q); }
+      a1 = address();  c = getchr();
+      if (c != ',' && c != ';') { break; }
       if (a1==0) {  a1 = zero+1;  if (a1 > dol) { a1--; }  }  addr1 = a1;  if (c == ';') { dot = a1; }
     }
-    if (lastsep != '\n' && a1 == 0) { a1 = dol; }
     if ((addr2 = a1)==0) { given = 0;  addr2 = dot;  } else { given = 1; }
     if (addr1==0) { addr1 = addr2; }
     switch(c) {
     case EOF:  return;
     case '\n':  if (a1 == 0) { a1 = dot + 1;  addr2 = a1;  addr1 = a1; }
-                if (lastsep == ';') { addr1 = a1; }  print();  continue;
+                print();  continue;
     case 'e':  if (vflag && fchange) { fchange = 0;  error(Q); } filename(c);  init();
                addr2 = zero;  goto caseread;
     case 'g':  global(1);  continue;
