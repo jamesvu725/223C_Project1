@@ -30,16 +30,16 @@ void commands(void) {  unsigned int *a1;  int c;
     }  error(Q);
   }
 }
-unsigned int* address(void) { unsigned int *a, *b;  int opcnt, nextopand;  int c;
-  nextopand = -1; opcnt = 0;  a = dot;
+unsigned int* address(void) { unsigned int *a, *b;  /*int opcnt, nextopand;*/  int c;
+  /*nextopand = -1; opcnt = 0;*/  a = dot;
   do {
     do c = getchr(); while (c==' ' || c=='\t');
-    if ('0'<=c && c<='9') {  peekc = c;  if (!opcnt)  { a = zero; }
+    if ('0'<=c && c<='9') {  peekc = c;  /*if (!opcnt)  { a = zero; }*/
     } else switch (c) {
       case '$':  a = dol;  /* fall through */
-      case '.':  if (opcnt) { error(Q); } break;
+      case '.':  /*if (opcnt) { error(Q); }*/ break;
       case '\'':
-        c = getchr();  if (opcnt || c<'a' || 'z'<c) { error(Q); }  a = zero;
+        c = getchr();  if (/*opcnt || */c<'a' || 'z'<c) { error(Q); }  a = zero;
         do { a++; } while (a<=dol && names[c-'a']!=(*a&~01));  break;
       case '?': case '/':
         compile(c);  b = a;
@@ -48,11 +48,11 @@ unsigned int* address(void) { unsigned int *a, *b;  int opcnt, nextopand;  int c
         }
         break;
       default:
-        if (nextopand == opcnt) { if (a < zero || dol < a)  { continue; } }
-        if (c!='+' && c!='-' && c!='^') {  peekc = c;  if (opcnt==0) { a = 0; }  return (a);  }
-        nextopand = ++opcnt;  continue;
+    /*if (nextopand == opcnt) { */if (a < zero || dol < a)  { continue; }
+        if (c!='+' && c!='-' && c!='^') {  peekc = c;  /*if (opcnt==0) { a = 0; }*/  return (a);  }
+        /*nextopand = ++opcnt;*/  continue;
     }
-    opcnt++;
+    // opcnt++;
   } while (zero<=a && a<=dol);
   error(Q);  /*NOTREACHED*/  return 0;
 }
