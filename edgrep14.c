@@ -165,8 +165,7 @@ void init(void) {
 }
 void newline(void) {  getchr(); }
 void print(void) {  unsigned int *a1 = addr1;
-  do {  if (listn) {  count = a1 - zero; putchr_('\t');  }  puts_(getline_blk(*a1++));  } while (a1 <= addr2);
-  dot = addr2;  listf = 0;  listn = 0;
+  do { puts_(getline_blk(*a1++)); } while (a1 <= addr2);
 }
 void putchr_(int ac) {  char *lp = linp;  int c = ac;
   if (listf) {

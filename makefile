@@ -5,7 +5,6 @@ compile:
 test:
 	./edgrep < test.txt
 all:
-	make clean
 	make compile
 	make test
 
