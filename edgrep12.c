@@ -131,13 +131,12 @@ int getchr(void) {  char c;
 int getfile(void) {  int c;  char *lp = linebuf, *fp = nextip;
   do { if (--ninbuf < 0) {
       if ((ninbuf = (int)read(io, genbuf, LBSIZE)-1) < 0) { return(EOF); }
-      fp = genbuf; } c = *fp++; *lp++ = c; 
+      fp = genbuf; } c = *fp++; *lp++ = c;
   } while (c != '\n'); nextip = fp; return(0);
 }
-char* getline_blk(unsigned int tl) {  char *bp, *lp;  int nl;  lp = linebuf;  bp = getblock(tl, READ);
-  nl = nleft;  tl &= ~((BLKSIZE/2)-1);
-  while ((*lp++ = *bp++)) { if (--nl == 0) {  bp = getblock(tl+=(BLKSIZE/2), READ);  nl = nleft;  } }
-  return(linebuf);
+char* getline_blk(unsigned int tl) {
+  char *bp = getblock(tl, READ), *lp = linebuf;
+  while ((*lp++ = *bp++)) {} return(linebuf);
 }
 void global(int k) {  char *gp;  int c;  unsigned int *a1;  char globuf[GBSIZE];
   if (globp) { error(Q); }  setwide();  /*squeeze(dol > zero);*/
