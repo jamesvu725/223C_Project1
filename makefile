@@ -1,7 +1,7 @@
 clean:
 	rm -f ed edgrep
 compile:
-	gcc -o edgrep edgrep6.c
+	gcc -o edgrep edgrep7.c
 test:
 	./edgrep < test.txt
 all:
