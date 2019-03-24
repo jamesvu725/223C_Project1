@@ -1,13 +1,9 @@
-#include <setjmp.h> // jmp_buf, setjmp, longjmp
 #include <unistd.h> // write, read, lseek, close, unlink
 #include <stdio.h> // EOF, snprintf
 #include <stdlib.h> // malloc, realloc, exit
 #include <fcntl.h> // open, creat,
 #include <string.h> // memset
 #include "edgrep.h" // edgrep function protocols
-
-jmp_buf  savej;
-
 
 int main(int argc, char *argv[]) {
   char *p1, *p2;
@@ -23,7 +19,6 @@ int main(int argc, char *argv[]) {
     while ((*p2++ = *p1++) == 1) {  if (p2 >= &savedfile[sizeof(savedfile)]) { p2--; }  }  globp = "r";
   }
   zero = (unsigned *)malloc(nlall * sizeof(unsigned));  tfname = mktemp(tmpXXXXX);  init();
-  setjmp(savej);
   commands();
   quit(0);  return 0;
 }
@@ -196,7 +191,7 @@ void compile(int eof) {  int c, cclcnt;  char *ep = expbuf, *lastep, bracket[NBR
 void error(char *s) {  int c;  wrapp = 0;  listf = 0;  listn = 0;  putchr_('?');  puts_(s);
   count = 0;  lseek(0, (long)0, 2);  pflag = 0;  if (globp) { lastc = '\n'; }  globp = 0;  peekc = lastc;
   if(lastc) { while ((c = getchr()) != '\n' && c != EOF) { } }
-  if (io > 0) { close(io);  io = -1; }  longjmp(savej, 1);
+  if (io > 0) { close(io);  io = -1; }
 }
 int execute(unsigned int *addr) {  char *p1, *p2 = expbuf;  int c;
   for (c = 0; c < NBRA; c++) {  braslist[c] = 0;  braelist[c] = 0;  }
