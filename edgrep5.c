@@ -35,10 +35,9 @@ void commands(void) {  unsigned int *a1;  int c;
     switch(c) {
     case EOF:  return; //need
     case 'e':  if (vflag && fchange) { fchange = 0;  error(Q); } filename(c);  init();
-               addr2 = zero;  goto caseread;
-    case 'g':  global(1);  continue;
-    case 'p':  case 'P':  newline();  print();  continue;
-    case 'Q':  fchange = 0;  case 'q':  newline();  quit(0);
+               addr2 = zero;  goto caseread; // need
+    case 'g':  global(1);  continue; // need
+    case 'p':  case 'P':  newline();  print();  continue; //need to print out message
     caseread:
         if ((io = open((const char*)file, 0)) < 0) { lastc = '\n';  error(file); }  setwide();  /*squeeze(0);*/
                  ninbuf = 0;  c = zero != dol;
