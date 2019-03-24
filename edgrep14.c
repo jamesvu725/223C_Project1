@@ -167,22 +167,10 @@ void newline(void) {  getchr(); }
 void print(void) {  unsigned int *a1 = addr1;
   do { puts_(getline_blk(*a1++)); } while (a1 <= addr2);
 }
-void putchr_(int ac) {  char *lp = linp;  int c = ac;
-  if (listf) {
-    if (c == '\n') {
-      if (linp != line && linp[-1]==' ') {  *lp++ = '\\';  *lp++ = 'n';  }
-    } else {
-      if (col > (72 - 4 - 2)) {  col = 8;  *lp++ = '\\';  *lp++ = '\n';  *lp++ = '\t';  }  col++;
-      if (c=='\b' || c=='\t' || c=='\\') {
-        *lp++ = '\\';
-        if (c=='\b') { c = 'b'; }  else if (c=='\t') { c = 't'; }  col++;
-      } else if (c<' ' || c=='\177') {
-        *lp++ = '\\';  *lp++ =  (c>>6) +'0';  *lp++ = ((c >> 3) & 07) + '0';  c = (c & 07) + '0';  col += 3;
-      }
-    }
-  }
-  *lp++ = c;
-  if (c == '\n' || lp >= &line[64]) {  linp = line;  write(oflag ? 2 : 1, line, lp - line);  return;  }  linp = lp;
+void putchr_(int ac) {
+  char *lp = linp;  int c = ac; *lp++ = c;
+  if (c == '\n' || lp >= &line[64]) { linp = line;
+    write(oflag ? 2 : 1, line, lp - line); return; } linp = lp;
 }
 int putline(void) {  char *bp, *lp;  int nl;  unsigned int tl;  fchange = 1;  lp = linebuf;
   tl = tline;  bp = getblock(tl, WRITE);  nl = nleft;  tl &= ~((BLKSIZE/2)-1);
