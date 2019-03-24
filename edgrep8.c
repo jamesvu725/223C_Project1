@@ -34,29 +34,14 @@ unsigned int* address(void) {
   unsigned int *a; int c; a = 0; c = getchr(); peekc = c; return (a); error(Q);
   /*NOTREACHED*/  return 0;
 }
-int advance(char *lp, char *ep) {  char *curlp;  int i;
+int advance(char *lp, char *ep) {
   for (;;) {
     switch (*ep++) {
       case CCHR:  if (*ep++ == *lp++) { continue; } return(0);
       case CDOT:  if (*lp++) { continue; }    return(0);
       case CDOL:  if (*lp==0) { continue; }  return(0);
-      case CEOF:  loc2 = lp;  return(1);
+      case CEOF:  return(1);
       case CCL:   if (cclass(ep, *lp++, 1)) {  ep += *ep;  continue; }  return(0);
-      case NCCL:  if (cclass(ep, *lp++, 0)) { ep += *ep;  continue; }  return(0);
-      case CBRA:  braslist[(unsigned)*ep++] = lp;  continue;
-      case CKET:  braelist[(unsigned)*ep++] = lp;  continue;
-      case CBACK:
-        if (braelist[i = *ep++] == 0) { error(Q); }
-        if (backref(i, lp)) { lp += braelist[i] - braslist[i];  continue; }  return(0);
-      case CBACK|STAR:
-        if (braelist[i = *ep++] == 0) { error(Q); }  curlp = lp;
-        while (backref(i, lp)) { lp += braelist[i] - braslist[i]; }
-        while (lp >= curlp) {  if (advance(lp, ep)) { return(1); }  lp -= braelist[i] - braslist[i];  }  continue;
-      case CDOT|STAR:  curlp = lp;  while (*lp++) { }                goto star;
-      case CCHR|STAR:  curlp = lp;  while (*lp++ == *ep) { }  ++ep;  goto star;
-      case CCL|STAR:
-      case NCCL|STAR:  curlp = lp;  while (cclass(ep, *lp++, ep[-1] == (CCL|STAR))) { }  ep += *ep;  goto star;
-      star:  do {  lp--;  if (advance(lp, ep)) { return(1); } } while (lp > curlp);  return(0);
       default: error(Q);
     }
   }
