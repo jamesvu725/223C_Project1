@@ -27,11 +27,11 @@ void commands(void) {  unsigned int *a1;  int c;
     case 'z':  grepline();  continue;
     default:  // fallthrough
     greperror(c);  continue;
-    }  error(Q);
+    }
   }
 }
 unsigned int* address(void) {
-  unsigned int *a; int c; a = 0; c = getchr(); peekc = c; return (a); error(Q);
+  unsigned int *a; int c; a = 0; c = getchr(); peekc = c; return (a);
   /*NOTREACHED*/  return 0;
 }
 int advance(char *lp, char *ep) {
@@ -42,7 +42,6 @@ int advance(char *lp, char *ep) {
       case CDOL:  if (*lp==0) { continue; }  return(0);
       case CEOF:  return(1);
       case CCL:   if (cclass(ep, *lp++, 1)) {  ep += *ep;  continue; }  return(0);
-      default: error(Q);
     }
   }
 }
@@ -53,15 +52,11 @@ int append(int (*f)(void), unsigned int *a) {
 }
 int cclass(char *set, int c, int af) {  int n;
   // if (c == 0) { return(0); }
-  n = *set++;
-  while (--n) {
-    if (*set++ == c) { return(af); }
-  }
-  return(!af);
+  n = *set++; while (--n) { if (*set++ == c) { return(af); } } return(!af);
 }
 void compile(int eof) {  int c, cclcnt;  char *ep = expbuf, *lastep, bracket[NBRA], *bracketp = bracket;
   if ((c = getchr()) == '\n') { peekc = c;  c = eof; }
-  if (c == eof) {  if (*ep==0) { error(Q); }  return; } nbra = 0;
+  if (c == eof) {  if (*ep==0) {}  return; } nbra = 0;
   if (c=='^') { c = getchr();  *ep++ = CCIRC; } peekc = c;
   lastep = 0;
   for (;;) {
@@ -99,13 +94,7 @@ void compile(int eof) {  int c, cclcnt;  char *ep = expbuf, *lastep, bracket[NBR
         lastep[1] = cclcnt;  continue;
       defchar:  default:  *ep++ = CCHR;  *ep++ = c;
     }
-  }  cerror:  expbuf[0] = 0;  nbra = 0;  error(Q);
-}
-void error(char *s) {
-  // int c;  wrapp = 0;  listf = 0;  listn = 0;  putchr_('?');  puts_(s);
-  // count = 0;  lseek(0, (long)0, 2); if (globp) { lastc = '\n'; }  globp = 0;  peekc = lastc;
-  // if(lastc) { while ((c = getchr()) != '\n' && c != EOF) { } }
-  // if (io > 0) { close(io);  io = -1; }
+  }  cerror:  expbuf[0] = 0;  nbra = 0;
 }
 int execute(unsigned int *addr) {
   char *p1, *p2 = expbuf; p1 = getline_blk(*addr);
