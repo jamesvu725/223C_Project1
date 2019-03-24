@@ -45,7 +45,7 @@ void commands(void) {  unsigned int *a1;  int c/*, temp*/;  char lastsep;
     caseread:
         if ((io = open((const char*)file, 0)) < 0) { lastc = '\n';  error(file); }  setwide();  /*squeeze(0);*/
                  ninbuf = 0;  c = zero != dol;
-        append(getfile, addr2);  exfile();  fchange = c; continue;
+        append(getfile, addr2); fchange = c; continue;
     case 'z':  grepline();  continue;
 
     case 'a':  /* add(0);  continue; */  // fallthrough
@@ -70,7 +70,7 @@ void commands(void) {  unsigned int *a1;  int c/*, temp*/;  char lastsep;
       if ((temp = getchr()) != 'q' && temp != 'Q') { peekc = temp;  temp = 0; } filename(c);
       if (!wrapp || ((io = open(file, 1)) == -1) || lseek(io, 0L, 2) == -1) {
         if ((io = creat(file, 0666)) < 0) { error(file); } }  wrapp = 0;
-      if (dol > zero) { putfile(); } exfile();  if (addr1 <= zero+1 && addr2 == dol) { fchange = 0; }
+      if (dol > zero) { putfile(); } if (addr1 <= zero+1 && addr2 == dol) { fchange = 0; }
                 if (temp == 'Q') { fchange = 0; }  if (temp) { quit(0); } continue; */  // fallthrough
     case '=':  /* setwide();  squeeze(0);  newline();  count = addr2 - zero;  putd();  putchr_('\n'); continue; */
                // fallthrough
@@ -206,7 +206,6 @@ int execute(unsigned int *addr) {  char *p1, *p2 = expbuf;  int c;
   }
   do {  /* regular algorithm */   if (advance(p1, p2)) {  loc1 = p1;  return(1);  }  } while (*p1++);  return(0);
 }
-void exfile(void) {  close(io);  io = -1;  if (vflag) {  putd();  putchr_('\n'); }  }
 void filename(int comm) {  char *p1, *p2;  int c;  count = 0;  c = getchr();
   if (c == '\n' || c == EOF) {
     p1 = savedfile;  if (*p1 == 0 && comm != 'f') { error(Q); }  p2 = file;  while ((*p2++ = *p1++) == 1) { }  return;
