@@ -51,25 +51,39 @@ int append(int (*f)(void), unsigned int *a) {
   while ((*f)() == 0) { tl = putline(); a1 = ++dol; rdot = ++dot; *rdot = tl; }
   return(nline);
 }
-int cclass(char *set, int c, int af) {  int n;  if (c == 0) { return(0); }  n = *set++;
-  while (--n) { if (*set++ == c) { return(af); } }  return(!af);
+int cclass(char *set, int c, int af) {  int n;
+  // if (c == 0) { return(0); }
+  n = *set++;
+  while (--n) {
+    if (*set++ == c) { return(af); }
+  }
+  return(!af);
 }
 void compile(int eof) {  int c, cclcnt;  char *ep = expbuf, *lastep, bracket[NBRA], *bracketp = bracket;
   if ((c = getchr()) == '\n') { peekc = c;  c = eof; }
-  if (c == eof) {  if (*ep==0) { error(Q); }  return; }
-  nbra = 0;  if (c=='^') { c = getchr();  *ep++ = CCIRC; }  peekc = c;  lastep = 0;
+  if (c == eof) {  if (*ep==0) { error(Q); }  return; } nbra = 0;
+  if (c=='^') { c = getchr();  *ep++ = CCIRC; } peekc = c;
+  lastep = 0;
   for (;;) {
-    if (ep >= &expbuf[ESIZE]) { goto cerror; }  c = getchr();  if (c == '\n') { peekc = c;  c = eof; }
+    if (ep >= &expbuf[ESIZE]) { goto cerror; }
+    c = getchr(); if (c == '\n') { peekc = c;  c = eof; }
     if (c==eof) { if (bracketp != bracket) { goto cerror; }  *ep++ = CEOF;  return;  }
     if (c!='*') { lastep = ep; }
     switch (c) {
       case '\\':
         if ((c = getchr())=='(') {
-          if (nbra >= NBRA) { goto cerror; }  *bracketp++ = nbra;  *ep++ = CBRA;  *ep++ = nbra++;  continue;
+          if (nbra >= NBRA) { goto cerror; }
+          *bracketp++ = nbra;
+          *ep++ = CBRA;
+          *ep++ = nbra++;
+          continue;
         }
         if (c == ')') {  if (bracketp <= bracket) { goto cerror; }  *ep++ = CKET;  *ep++ = *--bracketp;  continue; }
         if (c>='1' && c<'1'+NBRA) { *ep++ = CBACK;  *ep++ = c-'1';  continue; }
-        *ep++ = CCHR;  if (c=='\n') { goto cerror; }  *ep++ = c;  continue;
+        *ep++ = CCHR;
+        if (c=='\n') { goto cerror; }
+        *ep++ = c;
+        continue;
       case '.': *ep++ = CDOT;  continue;
       case '\n':  goto cerror;
       case '*':  if (lastep==0 || *lastep==CBRA || *lastep==CKET) { goto defchar; }  *lastep |= STAR; continue;
@@ -87,23 +101,20 @@ void compile(int eof) {  int c, cclcnt;  char *ep = expbuf, *lastep, bracket[NBR
     }
   }  cerror:  expbuf[0] = 0;  nbra = 0;  error(Q);
 }
-void error(char *s) {  int c;  wrapp = 0;  listf = 0;  listn = 0;  putchr_('?');  puts_(s);
-  count = 0;  lseek(0, (long)0, 2); if (globp) { lastc = '\n'; }  globp = 0;  peekc = lastc;
-  if(lastc) { while ((c = getchr()) != '\n' && c != EOF) { } }
-  if (io > 0) { close(io);  io = -1; }
+void error(char *s) {
+  // int c;  wrapp = 0;  listf = 0;  listn = 0;  putchr_('?');  puts_(s);
+  // count = 0;  lseek(0, (long)0, 2); if (globp) { lastc = '\n'; }  globp = 0;  peekc = lastc;
+  // if(lastc) { while ((c = getchr()) != '\n' && c != EOF) { } }
+  // if (io > 0) { close(io);  io = -1; }
 }
-int execute(unsigned int *addr) {  char *p1, *p2 = expbuf;  int c;
-  for (c = 0; c < NBRA; c++) {  braslist[c] = 0;  braelist[c] = 0;  }
-  if (addr == (unsigned *)0) {
-    if (*p2 == CCIRC) { return(0); }  p1 = loc2; } else if (addr == zero) { return(0); }
-  else { p1 = getline_blk(*addr); }
-  if (*p2 == CCIRC) {  loc1 = p1;  return(advance(p1, p2+1)); }
-  if (*p2 == CCHR) {    /* fast check for first character */  c = p2[1];
-    do {  if (*p1 != c) { continue; }  if (advance(p1, p2)) {  loc1 = p1;  return(1); }
-    } while (*p1++);
-    return(0);
-  }
-  do {  /* regular algorithm */   if (advance(p1, p2)) {  loc1 = p1;  return(1);  }  } while (*p1++);  return(0);
+int execute(unsigned int *addr) {
+  char *p1, *p2 = expbuf; p1 = getline_blk(*addr);
+  do {  /* regular algorithm */
+    if (advance(p1, p2)) {
+      return(1);
+    }
+  } while (*p1++);
+  return(0);
 }
 void filename(int comm) {  char *p1, *p2;  int c;  count = 0;  c = getchr();
   if (c == '\n' || c == EOF) {

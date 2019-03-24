@@ -12,3 +12,7 @@ z
 g/.
 z
 g/\.
+z
+g/t.e
+z
+g/b[or]
