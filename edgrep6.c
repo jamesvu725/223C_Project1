@@ -15,7 +15,6 @@ void commands(void) {  unsigned int *a1;  int c;
     for (addr1 = 0;;) {
       a1 = address();  c = getchr();
       if (c != ',' && c != ';') { break; }
-      if (a1==0) {  a1 = zero+1;  if (a1 > dol) { a1--; }  }  addr1 = a1;  if (c == ';') { dot = a1; }
     }
     if ((addr2 = a1)==0) { given = 0;  addr2 = dot;  } else { given = 1; }
     if (addr1==0) { addr1 = addr2; }
