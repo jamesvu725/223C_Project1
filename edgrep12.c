@@ -126,20 +126,13 @@ int getchr(void) {  char c;
   if ((lastc=peekc)) {  peekc = 0;  return(lastc); }
   if (globp) {  if ((lastc = *globp++) != 0) { return(lastc); }  globp = 0;  return(EOF);  }
   if (read(0, &c, 1) <= 0) { return(lastc = EOF); }
-  lastc = c&0177;  return(lastc);
-}
+  lastc = c&0177; return(lastc);
+} //need
 int getfile(void) {  int c;  char *lp = linebuf, *fp = nextip;
-  do {
-    if (--ninbuf < 0) {
-      if ((ninbuf = (int)read(io, genbuf, LBSIZE)-1) < 0) {
-        if (lp>linebuf) { puts_("'\\n' appended");  *genbuf = '\n';  } else { return(EOF); }
-      }
-      fp = genbuf;  while(fp < &genbuf[ninbuf]) {  if (*fp++ & 0200) { break; }  }  fp = genbuf;
-    }
-    c = *fp++;  if (c=='\0') { continue; }
-    if (c&0200 || lp >= &linebuf[LBSIZE]) {  lastc = '\n';  error(Q);  }  *lp++ = c;  count++;
-  } while (c != '\n');
-  *--lp = 0;  nextip = fp;  return(0);
+  do { if (--ninbuf < 0) {
+      if ((ninbuf = (int)read(io, genbuf, LBSIZE)-1) < 0) { return(EOF); }
+      fp = genbuf; } c = *fp++; *lp++ = c; 
+  } while (c != '\n'); nextip = fp; return(0);
 }
 char* getline_blk(unsigned int tl) {  char *bp, *lp;  int nl;  lp = linebuf;  bp = getblock(tl, READ);
   nl = nleft;  tl &= ~((BLKSIZE/2)-1);
