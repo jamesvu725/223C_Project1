@@ -1,3 +1,46 @@
+#define BLKSIZE 4096
+#define NBLK 2047
+#define FNSIZE 128
+#define LBSIZE 4096
+#define ESIZE 256
+#define GBSIZE 256
+#define NBRA 5
+#define KSIZE 9
+#define CBRA 1
+#define CCHR 2
+#define CDOT 4
+#define CCL 6
+#define NCCL 8
+#define CDOL 10
+#define CEOF 11
+#define CKET 12
+#define CBACK 14
+#define CCIRC 15
+#define STAR 01
+#define READ 0
+#define WRITE 1  /* #define EOF = -1; */
+
+
+int  peekc, lastc, given, ninbuf, io, pflag;
+int  vflag  = 1, oflag, listf, listn, col, tfile  = -1, tline, iblock  = -1, oblock  = -1, ichanged, nleft;
+int  names[26], anymarks, nbra, subnewa, subolda, fchange, wrapp, bpagesize = 20;
+unsigned nlall = 128;  unsigned int  *addr1, *addr2, *dot, *dol, *zero;
+
+long  count;
+char  Q[] = "", T[] = "TMP", savedfile[FNSIZE], file[FNSIZE], linebuf[LBSIZE], rhsbuf[LBSIZE/2], expbuf[ESIZE+4];
+char  genbuf[LBSIZE], *nextip, *linebp, *globp, *mktemp(char *), tmpXXXXX[50] = "/tmp/eXXXXX";
+char  *tfname, *loc1, *loc2, ibuff[BLKSIZE], obuff[BLKSIZE], WRERR[]  = "WRITE ERROR", *braslist[NBRA], *braelist[NBRA];
+char  line[70];  char  *linp  = line;
+char grepbuf[GBSIZE];
+
+#define MAXFILE 100 // max number of files for files array
+int nfiles = 0; // number of files
+char* files[MAXFILE]; // array to hold files
+char* fname; // file name
+int mfiles = 0; // multiple file boolean 0 for no 1 for yes
+char* regex; // regex pattern
+
+
 void commands(void); void add(int i);  unsigned int *address(void);  int advance(char *lp, char *ep);
 int append(int (*f)(void), unsigned int *a);  int backref(int i, char *lp);
 void blkio(int b, char *buf, long (*iofcn)(int, void*, unsigned long));  void callunix(void);

@@ -46,7 +46,6 @@ int main(int argc, char *argv[]) {
   while (argc > 1 && **argv=='-') {
     switch((*argv)[1]) {
     case '\0': vflag = 0;  break;
-    vflag = 1;  break;
     case 'o': oflag = 1;  break;
     }
     argv++;  argc--;
