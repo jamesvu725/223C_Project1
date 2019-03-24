@@ -37,11 +37,11 @@ void commands(void) {  unsigned int *a1;  int c/*, temp*/;  char lastsep;
     case EOF:  return;
     case '\n':  if (a1 == 0) { a1 = dot + 1;  addr2 = a1;  addr1 = a1; }
                 if (lastsep == ';') { addr1 = a1; }  print();  continue;
-    case 'e':  setnoaddr(); if (vflag && fchange) { fchange = 0;  error(Q); } filename(c);  init();
+    case 'e':  if (vflag && fchange) { fchange = 0;  error(Q); } filename(c);  init();
                addr2 = zero;  goto caseread;
     case 'g':  global(1);  continue;
     case 'p':  case 'P':  newline();  print();  continue;
-    case 'Q':  fchange = 0;  case 'q':  setnoaddr();  newline();  quit(0);
+    case 'Q':  fchange = 0;  case 'q':  newline();  quit(0);
     caseread:
         if ((io = open((const char*)file, 0)) < 0) { lastc = '\n';  error(file); }  setwide();  /*squeeze(0);*/
                  ninbuf = 0;  c = zero != dol;
@@ -52,7 +52,7 @@ void commands(void) {  unsigned int *a1;  int c/*, temp*/;  char lastsep;
     case 'c':  /* nonzero(); newline(); rdelete(addr1,addr2); append(gettty, addr1-1); continue; */  // fallthrough
     case 'd':  /* nonzero();  newline();  rdelete(addr1,addr2);  continue; */  // fallthrough
     case 'E':  /* fchange = 0;  c = 'e'; */  // fallthrough
-    case 'f':  /* setnoaddr();  filename(c);  puts_(savedfile);  continue; */  // fallthrough
+    case 'f':  /* filename(c);  puts_(savedfile);  continue; */  // fallthrough
     case 'i':  /* add(-1);  continue;  */  // fallthrough
     case 'j':  /* if (!given) { addr2++; }  newline();  join();  continue; */  // fallthrough
     case 'k':  /* nonzero();  if ((c = getchr()) < 'a' || c > 'z') { error(Q); }  newline();
@@ -230,7 +230,6 @@ char * getblock(unsigned int atl, int iof) {  int off, bno = (atl/(BLKSIZE/2)); 
   oblock = bno;  return(obuff+off);
 }
 char inputbuf[GBSIZE];
-
 int getchr(void) {  char c;
   if ((lastc=peekc)) {  peekc = 0;  return(lastc); }
   if (globp) {  if ((lastc = *globp++) != 0) { return(lastc); }  globp = 0;  return(EOF);  }
@@ -337,5 +336,4 @@ void quit(int n) { if (vflag && fchange && dol!=zero) {  fchange = 0;  error(Q);
 void reverse(unsigned int *a1, unsigned int *a2) {  int t;
   for (;;) {  t = *--a2;  if (a2 <= a1) { return; }  *a2 = *a1;  *a1++ = t;  }
 }
-void setnoaddr(void) { if (given) { error(Q); } }
 void setwide(void) { if (!given) { addr1 = zero + (dol>zero);  addr2 = dol; } }
