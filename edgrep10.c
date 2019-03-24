@@ -51,9 +51,6 @@ int append(int (*f)(void), unsigned int *a) {
   while ((*f)() == 0) { tl = putline(); a1 = ++dol; rdot = ++dot; *rdot = tl; }
   return(nline);
 }
-int backref(int i, char *lp) {  char *bp;  bp = braslist[i];
-  while (*bp++ == *lp++) { if (bp >= braelist[i])   { return(1); } }  return(0);
-}
 void blkio(int b, char *buf, long (*iofcn)(int, void*, unsigned long)) {
   lseek(tfile, (long)b*BLKSIZE, 0);  if ((*iofcn)(tfile, buf, BLKSIZE) != BLKSIZE) {  error(T);  }
 }
