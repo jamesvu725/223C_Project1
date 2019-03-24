@@ -33,9 +33,7 @@ void commands(void) {  unsigned int *a1;  int c;
     if ((addr2 = a1)==0) { given = 0;  addr2 = dot;  } else { given = 1; }
     if (addr1==0) { addr1 = addr2; }
     switch(c) {
-    case EOF:  return;
-    case '\n':  if (a1 == 0) { a1 = dot + 1;  addr2 = a1;  addr1 = a1; }
-                print();  continue;
+    case EOF:  return; //need
     case 'e':  if (vflag && fchange) { fchange = 0;  error(Q); } filename(c);  init();
                addr2 = zero;  goto caseread;
     case 'g':  global(1);  continue;
