@@ -112,15 +112,14 @@ int execute(unsigned int *addr) {
   do { if (advance(p1, p2)) { return(1); } } while (*p1++);
   return(0);
 }
-void filename(int comm) {  char *p1;  int c; c = getchr();
+void filename(int comm) {
+  char *p1;  int c; c = getchr();
   while ((c = getchr()) == ' ') { } p1 = file;
   do { *p1++ = c; } while ((c = getchr()) != '\n');
 }
-char * getblock(unsigned int atl, int iof) {  int off, bno = (atl/(BLKSIZE/2));  off = (atl<<1) & (BLKSIZE-1) & ~03;
-  if (bno >= NBLK) {  lastc = '\n';  error(T);  }  nleft = BLKSIZE - off;
-  if (bno==iblock) {  ichanged |= iof;  return(ibuff+off);  }  if (bno==oblock)  { return(obuff+off);  }
-  if (iof==READ) { ichanged = 0;  iblock = bno; return(ibuff+off); }
-  oblock = bno;  return(obuff+off);
+char * getblock(unsigned int atl, int iof) {
+  int off = (atl<<1) & (BLKSIZE-1) & ~03;
+  return(obuff+off);
 }
 char inputbuf[GBSIZE];
 int getchr(void) {  char c;
