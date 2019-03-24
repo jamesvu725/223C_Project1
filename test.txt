@@ -1,7 +1,5 @@
 e rj.txt
-,p
-z
-1,5
+g/ACT
 z
 g/ife
 z

@@ -84,7 +84,7 @@ unsigned int* address(void) {  int sign;  unsigned int *a, *b;  int opcnt, nexto
   nextopand = -1;  sign = 1;  opcnt = 0;  a = dot;
   do {
     do c = getchr(); while (c==' ' || c=='\t');
-    if ('0'<=c && c<='9') {  peekc = c;  if (!opcnt)  { a = zero; }  a += sign*getnum();
+    if ('0'<=c && c<='9') {  peekc = c;  if (!opcnt)  { a = zero; }
     } else switch (c) {
       case '$':  a = dol;  /* fall through */
       case '.':  if (opcnt) { error(Q); } break;
@@ -254,9 +254,6 @@ char* getline_blk(unsigned int tl) {  char *bp, *lp;  int nl;  lp = linebuf;  bp
   nl = nleft;  tl &= ~((BLKSIZE/2)-1);
   while ((*lp++ = *bp++)) { if (--nl == 0) {  bp = getblock(tl+=(BLKSIZE/2), READ);  nl = nleft;  } }
   return(linebuf);
-}
-int getnum(void) { int r = 0, c;
-  while ((c = getchr())>='0' && c <= '9') { r = r * 10 + c - '0'; }  peekc = c;  return (r);
 }
 void global(int k) {  char *gp;  int c;  unsigned int *a1;  char globuf[GBSIZE];
   if (globp) { error(Q); }  setwide();  /*squeeze(dol > zero);*/
