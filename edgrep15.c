@@ -107,8 +107,7 @@ void filename(int comm) {
   do { *p1++ = c; } while ((c = getchr()) != '\n');
 }
 char * getblock(unsigned int atl, int iof) {
-  int off = (atl<<1) & (BLKSIZE-1) & ~03;
-  return(obuff+off);
+  int off = (atl<<1) & (BLKSIZE-1) & ~03; return(obuff+off);
 }
 char inputbuf[GBSIZE];
 int getchr(void) {  char c;
@@ -145,12 +144,11 @@ void grepline(void) {
   getchr(); for (int i = 0; i < 50; ++i) { putchr_('-'); } putchr_('\n');
 }
 void init(void) {
-  int *markp;
-  close(tfile);
-  tline = 2;
+  int *markp; close(tfile); tline = 2;
   for (markp = names; markp < &names[26]; )  {  *markp++ = 0;  }
   subnewa = 0;  anymarks = 0;  iblock = -1;  oblock = -1;  ichanged = 0;
-  close(creat(tfname, 0600));  tfile = open(tfname, 2);  dot = dol = zero;  memset(inputbuf, 0, sizeof(inputbuf));
+  close(creat(tfname, 0600));  tfile = open(tfname, 2);  dot = dol = zero;
+  memset(inputbuf, 0, sizeof(inputbuf));
 }
 void print(void) {  unsigned int *a1 = addr1;
   do { puts_(getline_blk(*a1++)); } while (a1 <= addr2);
@@ -166,9 +164,4 @@ int putline(void) { char *bp, *lp;  int nl;  unsigned int tl; lp = linebuf;
   nl = tline; tline += (((lp - linebuf) + 03) >> 1) & 077776; return(nl);
 }
 void puts_(char *sp) {  col = 0;  while (*sp) { putchr_(*sp++); }  putchr_('\n');  }
-void setwide(void) {
-  if (!given) {
-    addr1 = zero + (dol>zero);
-    addr2 = dol;
-  }
-}
+void setwide(void) { if (!given) { addr1 = zero + (dol>zero); addr2 = dol; } }
