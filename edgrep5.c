@@ -22,9 +22,9 @@ int main(int argc, char *argv[]) {
   commands();
   quit(0);  return 0;
 }
-void commands(void) {  unsigned int *a1;  int c/*, temp*/;  char lastsep;
+void commands(void) {  unsigned int *a1;  int c;  char lastsep;
   for (;;) {
-    if (pflag) { pflag = 0;  addr1 = addr2 = dot;  print(); }  c = '\n';
+    c = '\n';
     for (addr1 = 0;;) {
       lastsep = c;  a1 = address();  c = getchr();
       if (c != ',' && c != ';') { break; }  if (lastsep==',') { error(Q); }
@@ -47,34 +47,6 @@ void commands(void) {  unsigned int *a1;  int c/*, temp*/;  char lastsep;
                  ninbuf = 0;  c = zero != dol;
         append(getfile, addr2); fchange = c; continue;
     case 'z':  grepline();  continue;
-
-    case 'a':  /* add(0);  continue; */  // fallthrough
-    case 'c':  /* nonzero(); newline(); rdelete(addr1,addr2); append(gettty, addr1-1); continue; */  // fallthrough
-    case 'd':  /* nonzero();  newline();  rdelete(addr1,addr2);  continue; */  // fallthrough
-    case 'E':  /* fchange = 0;  c = 'e'; */  // fallthrough
-    case 'f':  /* filename(c);  puts_(savedfile);  continue; */  // fallthrough
-    case 'i':  /* add(-1);  continue;  */  // fallthrough
-    case 'j':  /* if (!given) { addr2++; }  newline();  join();  continue; */  // fallthrough
-    case 'k':  /* nonzero();  if ((c = getchr()) < 'a' || c > 'z') { error(Q); }  newline();
-                names[c-'a'] = *addr2 & ~01;  anymarks |= 01;  continue; */  // fallthrough
-    case 'l':  /* listf++; */  // fallthrough
-    case 'm':  /* move_(0);  continue; */  // fallthrough
-    case 'n':  /* listn++;  newline();  print();  continue;  */  // fallthrough
-    case 'r':  /* filename(c); */  // fallthrough
-    case 's':  /* nonzero();  substitute(globp!=0);  continue; */  // fallthrough
-    case 't':  /* move_(1);  continue;  */  // fallthrough
-    case 'u':  /* nonzero();  newline(); if ((*addr2&~01) != subnewa) { error(Q); }  *addr2 = subolda;
-                dot = addr2; continue; */  // fallthrough
-    case 'v':  /* global(0);  continue;  // falthrough
-    case 'W':   wrapp++;  case 'w': setwide();  squeeze(dol > zero);
-      if ((temp = getchr()) != 'q' && temp != 'Q') { peekc = temp;  temp = 0; } filename(c);
-      if (!wrapp || ((io = open(file, 1)) == -1) || lseek(io, 0L, 2) == -1) {
-        if ((io = creat(file, 0666)) < 0) { error(file); } }  wrapp = 0;
-      if (addr1 <= zero+1 && addr2 == dol) { fchange = 0; }
-                if (temp == 'Q') { fchange = 0; }  if (temp) { quit(0); } continue; */  // fallthrough
-    case '=':  /* setwide();  squeeze(0);  newline();  count = addr2 - zero; putchr_('\n'); continue; */
-               // fallthrough
-    case '!':  /* callunix();  continue; */  // fallthrough
     default:  // fallthrough
     /*caseGrepError:  */greperror(c);  continue;
     }  error(Q);
@@ -189,7 +161,7 @@ void compile(int eof) {  int c, cclcnt;  char *ep = expbuf, *lastep, bracket[NBR
   }  cerror:  expbuf[0] = 0;  nbra = 0;  error(Q);
 }
 void error(char *s) {  int c;  wrapp = 0;  listf = 0;  listn = 0;  putchr_('?');  puts_(s);
-  count = 0;  lseek(0, (long)0, 2);  pflag = 0;  if (globp) { lastc = '\n'; }  globp = 0;  peekc = lastc;
+  count = 0;  lseek(0, (long)0, 2); if (globp) { lastc = '\n'; }  globp = 0;  peekc = lastc;
   if(lastc) { while ((c = getchr()) != '\n' && c != EOF) { } }
   if (io > 0) { close(io);  io = -1; }
 }
@@ -282,14 +254,14 @@ void init(void) {  int *markp;  close(tfile);  tline = 2;
   close(creat(tfname, 0600));  tfile = open(tfname, 2);  dot = dol = zero;  memset(inputbuf, 0, sizeof(inputbuf));
 }
 void newline(void) {  int c;  if ((c = getchr()) == '\n' || c == EOF) { return; }
-  if (c == 'p' || c == 'l' || c == 'n') {  pflag++;
+  if (c == 'p' || c == 'l' || c == 'n') {
     if (c == 'l') { listf++;  } else if (c == 'n') { listn++; }
     if ((c = getchr()) == '\n') { return; }
   }  error(Q);
 }
 void print(void) {  unsigned int *a1 = addr1;
   do {  if (listn) {  count = a1 - zero; putchr_('\t');  }  puts_(getline_blk(*a1++));  } while (a1 <= addr2);
-  dot = addr2;  listf = 0;  listn = 0;  pflag = 0;
+  dot = addr2;  listf = 0;  listn = 0;
 }
 void putchr_(int ac) {  char *lp = linp;  int c = ac;
   if (listf) {
