@@ -6,31 +6,27 @@
 #include "edgrep.h" // edgrep function protocols
 
 int main(int argc, char *argv[]) {
-  zero = (unsigned *)malloc(nlall * sizeof(unsigned)); commands();
-  return 0;
+  zero = (unsigned *)malloc(nlall * sizeof(unsigned)); commands(); return 0;
 }
 void commands(void) {  unsigned int *a1;  int c;
   for (;;) {
     c = '\n';
     for (addr1 = 0;;) {
-      a1 = address();  c = getchr();
-      if (c != ',' && c != ';') { break; }
+      a1 = address();  c = getchr(); if (c != ',' && c != ';') { break; }
     }
     if ((addr2 = a1)==0) { given = 0;  addr2 = dot;  } else { given = 1; }
     if (addr1==0) { addr1 = addr2; }
     switch(c) {
     case EOF:  return; //need
-    case 'e':  if (vflag && fchange) { fchange = 0;  error(Q); } filename(c);  init();
-               addr2 = zero;  goto caseread; // need
+    case 'e':  filename(c);  init(); goto caseread; // need
     case 'g':  global(1);  continue; // need
     case 'p':  case 'P':  newline();  print();  continue; //need to print out message
     caseread:
-        if ((io = open((const char*)file, 0)) < 0) { lastc = '\n';  error(file); }  setwide();  /*squeeze(0);*/
-                 ninbuf = 0;  c = zero != dol;
-        append(getfile, addr2); fchange = c; continue;
+        io = open((const char*)file, 0); setwide(); append(getfile, addr2);
+        continue;
     case 'z':  grepline();  continue;
     default:  // fallthrough
-    /*caseGrepError:  */greperror(c);  continue;
+    greperror(c);  continue;
     }  error(Q);
   }
 }
