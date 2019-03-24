@@ -319,7 +319,4 @@ int putline(void) {  char *bp, *lp;  int nl;  unsigned int tl;  fchange = 1;  lp
 }
 void puts_(char *sp) {  col = 0;  while (*sp) { putchr_(*sp++); }  putchr_('\n');  }
 void quit(int n) { if (vflag && fchange && dol!=zero) {  fchange = 0;  error(Q);  }  unlink(tfname); exit(0); }
-void reverse(unsigned int *a1, unsigned int *a2) {  int t;
-  for (;;) {  t = *--a2;  if (a2 <= a1) { return; }  *a2 = *a1;  *a1++ = t;  }
-}
 void setwide(void) { if (!given) { addr1 = zero + (dol>zero);  addr2 = dol; } }
