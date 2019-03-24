@@ -70,7 +70,7 @@ void commands(void) {  unsigned int *a1;  int c/*, temp*/;  char lastsep;
       if ((temp = getchr()) != 'q' && temp != 'Q') { peekc = temp;  temp = 0; } filename(c);
       if (!wrapp || ((io = open(file, 1)) == -1) || lseek(io, 0L, 2) == -1) {
         if ((io = creat(file, 0666)) < 0) { error(file); } }  wrapp = 0;
-      if (dol > zero) { putfile(); } if (addr1 <= zero+1 && addr2 == dol) { fchange = 0; }
+      if (addr1 <= zero+1 && addr2 == dol) { fchange = 0; }
                 if (temp == 'Q') { fchange = 0; }  if (temp) { quit(0); } continue; */  // fallthrough
     case '=':  /* setwide();  squeeze(0);  newline();  count = addr2 - zero;  putd();  putchr_('\n'); continue; */
                // fallthrough
@@ -309,19 +309,6 @@ void putchr_(int ac) {  char *lp = linp;  int c = ac;
   if (c == '\n' || lp >= &line[64]) {  linp = line;  write(oflag ? 2 : 1, line, lp - line);  return;  }  linp = lp;
 }
 void putd(void) {  int r = count % 10;  count /= 10;  if (count) { putd(); }  putchr_(r + '0');  }
-void putfile(void) {  unsigned int *a1;  char *fp, *lp;  int n, nib = BLKSIZE;  fp = genbuf;  a1 = addr1;
-  do {
-    lp = getline_blk(*a1++);
-    for (;;) {
-      if (--nib < 0) {
-        n = (int)(fp-genbuf);
-        if (write(io, genbuf, n) != n) {  puts_(WRERR);  error(Q);  }  nib = BLKSIZE-1;  fp = genbuf;
-      }
-      count++;  if ((*fp++ = *lp++) == 0) {  fp[-1] = '\n';  break; }
-    }
-  } while (a1 <= addr2);
-  n = (int)(fp-genbuf);  if (write(io, genbuf, n) != n) {  puts_(WRERR);  error(Q); }
-}
 int putline(void) {  char *bp, *lp;  int nl;  unsigned int tl;  fchange = 1;  lp = linebuf;
   tl = tline;  bp = getblock(tl, WRITE);  nl = nleft;  tl &= ~((BLKSIZE/2)-1);
   while ((*bp = *lp++)) {
