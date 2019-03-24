@@ -178,5 +178,9 @@ int putline(void) { char *bp, *lp;  int nl;  unsigned int tl; lp = linebuf;
   nl = tline; tline += (((lp - linebuf) + 03) >> 1) & 077776; return(nl);
 }
 void puts_(char *sp) {  col = 0;  while (*sp) { putchr_(*sp++); }  putchr_('\n');  }
-void quit(int n) { if (vflag && fchange && dol!=zero) {  fchange = 0;  error(Q);  }  unlink(tfname); exit(0); }
-void setwide(void) { if (!given) { addr1 = zero + (dol>zero);  addr2 = dol; } }
+void setwide(void) {
+  if (!given) {
+    addr1 = zero + (dol>zero);
+    addr2 = dol;
+  }
+}
