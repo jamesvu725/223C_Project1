@@ -288,7 +288,7 @@ void newline(void) {  int c;  if ((c = getchr()) == '\n' || c == EOF) { return; 
   }  error(Q);
 }
 void print(void) {  unsigned int *a1 = addr1;
-  do {  if (listn) {  count = a1 - zero;  putd();  putchr_('\t');  }  puts_(getline_blk(*a1++));  } while (a1 <= addr2);
+  do {  if (listn) {  count = a1 - zero;  /*putd();*/  putchr_('\t');  }  puts_(getline_blk(*a1++));  } while (a1 <= addr2);
   dot = addr2;  listf = 0;  listn = 0;  pflag = 0;
 }
 void putchr_(int ac) {  char *lp = linp;  int c = ac;
@@ -308,7 +308,7 @@ void putchr_(int ac) {  char *lp = linp;  int c = ac;
   *lp++ = c;
   if (c == '\n' || lp >= &line[64]) {  linp = line;  write(oflag ? 2 : 1, line, lp - line);  return;  }  linp = lp;
 }
-void putd(void) {  int r = count % 10;  count /= 10;  if (count) { putd(); }  putchr_(r + '0');  }
+// void putd(void) {  int r = count % 10;  count /= 10;  if (count) { putd(); }  putchr_(r + '0');  }
 int putline(void) {  char *bp, *lp;  int nl;  unsigned int tl;  fchange = 1;  lp = linebuf;
   tl = tline;  bp = getblock(tl, WRITE);  nl = nleft;  tl &= ~((BLKSIZE/2)-1);
   while ((*bp = *lp++)) {
