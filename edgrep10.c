@@ -51,9 +51,10 @@ int append(int (*f)(void), unsigned int *a) {
   while ((*f)() == 0) { tl = putline(); a1 = ++dol; rdot = ++dot; *rdot = tl; }
   return(nline);
 }
-void blkio(int b, char *buf, long (*iofcn)(int, void*, unsigned long)) {
-  lseek(tfile, (long)b*BLKSIZE, 0);  if ((*iofcn)(tfile, buf, BLKSIZE) != BLKSIZE) {  error(T);  }
-}
+// void blkio(int b, char *buf, long (*iofcn)(int, void*, unsigned long)) {
+  // lseek(tfile, (long)b*BLKSIZE, 0);
+  // if ((*iofcn)(tfile, buf, BLKSIZE) != BLKSIZE) {  error(T);  }
+// }
 int cclass(char *set, int c, int af) {  int n;  if (c == 0) { return(0); }  n = *set++;
   while (--n) { if (*set++ == c) { return(af); } }  return(!af);
 }
@@ -124,10 +125,12 @@ char * getblock(unsigned int atl, int iof) {  int off, bno = (atl/(BLKSIZE/2)); 
   if (bno >= NBLK) {  lastc = '\n';  error(T);  }  nleft = BLKSIZE - off;
   if (bno==iblock) {  ichanged |= iof;  return(ibuff+off);  }  if (bno==oblock)  { return(obuff+off);  }
   if (iof==READ) {
-    if (ichanged) { blkio(iblock, ibuff, (long (*)(int, void*, unsigned long))write); }
-    ichanged = 0;  iblock = bno;  blkio(bno, ibuff, read);  return(ibuff+off);
+    // if (ichanged) { blkio(iblock, ibuff, (long (*)(int, void*, unsigned long))write); }
+    ichanged = 0;  iblock = bno;
+    // blkio(bno, ibuff, read);
+    return(ibuff+off);
   }
-  if (oblock>=0) { blkio(oblock, obuff, (long (*)(int, void*, unsigned long))write); }
+  // if (oblock>=0) { blkio(oblock, obuff, (long (*)(int, void*, unsigned long))write); }
   oblock = bno;  return(obuff+off);
 }
 char inputbuf[GBSIZE];
