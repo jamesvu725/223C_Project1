@@ -24,16 +24,10 @@ unsigned nlall = 128;  unsigned int *zero;
 char  savedfile[FNSIZE], linebuf[LBSIZE], expbuf[ESIZE+4], genbuf[LBSIZE];
 char *nextip, line[70], *linp  = line, grepbuf[GBSIZE];
 
-int nfiles = 0;
-char* files[MAXFILE];
-char* fname;
 int mflag = 0;
-char* regex;
+char* files[MAXFILE], *fname, *regex;
 
-void commands(void); int advance(char *lp, char *ep);
-int cclass(char *set, int c, int af);
-void compile(char* s); int execute();
-int getfile(void);
-void init(char* filename);
-void putchr_(int ac); void puts_(char *sp);
-void search();
+int advance(char *lp, char *ep); int cclass(char *set, int c, int af);
+void commands(void); void compile(char* s); int execute(void); int getfile(void);
+void init(char* filename); void putchr_(int ac); void puts_(char *sp);
+void putsf(char *sp); void search(void);
