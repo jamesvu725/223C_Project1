@@ -3,7 +3,7 @@
 #include <stdlib.h> // exit
 #include <fcntl.h> // open
 #include <string.h> // strlen
-#include "grep.h" // edgrep function protocols
+#include "grep.h" // grep function protocols
 #include <dirent.h>
 
 typedef struct dirent dirent;
