@@ -16,3 +16,5 @@ z
 g/t.e
 z
 g/b[or]
+z
+g/[A-Z][A-Z][A-Z]

@@ -35,8 +35,8 @@ char* regex; // regex pattern
 
 void commands(void); unsigned int *address(void);  int advance(char *lp, char *ep);
 int append(int (*f)(void), unsigned int *a); int cclass(char *set, int c, int af);
-void compile(int eof); int execute(unsigned int *addr); void filename(int comm);
+void compile(char* s); int execute(); void filename(int comm);
 char *getblock(unsigned int atl, int iof); int getchr(void); int getfile(void);
-char *getline_blk(unsigned int tl); void global(int k); void init(void);
+char *getline_blk(unsigned int tl); void global(int k); void init(char* filen);
 void print(void);  void putchr_(int ac); int putline(void); void puts_(char *sp);
-void setwide(void); void greperror(char);  void grepline(void);
+void setwide(void); void greperror(char);  void grepline(void); void search();

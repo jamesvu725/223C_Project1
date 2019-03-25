@@ -11,3 +11,7 @@ all:
 gitstuff:
 	git add .
 	git commit
+
+testing:
+	make compile
+	./edgrep the rj.txt
