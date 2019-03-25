@@ -30,4 +30,4 @@ char* files[MAXFILE], *fname, *regex;
 int advance(char *lp, char *ep); int cclass(char *set, int c, int af);
 void commands(void); void compile(char* s); int execute(void); int getfile(void);
 void exfile(char* filename); void putchr_(int ac); void puts_(char *sp);
-void putsf(char *sp); void search(void);
+void putsf(char *sp); void search(void); void grep(char *s, char* filename);

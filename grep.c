@@ -3,7 +3,7 @@
 #include <stdlib.h> // exit
 #include <fcntl.h> // open
 #include <string.h> // strlen
-#include "edgrep.h" // edgrep function protocols
+#include "grep.h" // edgrep function protocols
 #include <dirent.h>
 
 typedef struct dirent dirent;
@@ -11,7 +11,8 @@ DIR* dir;
 dirent* in_dir;
 
 int main(int argc, char *argv[]) {
-  if (argc < 3) { puts_("Not enough arguments"); return 0; }
+  if (argc < 3) {
+    puts_("Not enough arguments"); return 0; }
   regex = argv[1]; fname = argv[2];
   int nfiles = 0;
   if ((dir = opendir(fname)) != NULL) {
@@ -27,12 +28,17 @@ int main(int argc, char *argv[]) {
   }
   if (mflag == 1) {
     for (int i = 0; i < nfiles; ++i) {
-      fname = files[i]; compile(regex); exfile(fname); search();
+      fname = files[i]; grep(regex, fname);
     }
-  } else { compile(regex); exfile(fname); search(); }
-  if (!match) { exit(1); }
+  } else { grep(regex, fname); }
+  if (!match) { puts_("No matches found"); exit(1); }
   exit(0);
   return 0;
+}
+void grep(char* s, char* filename) {
+  compile(s);
+  exfile(filename);
+  search();
 }
 int advance(char *lp, char *ep) {
   for (;;) {
