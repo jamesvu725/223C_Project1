@@ -21,10 +21,10 @@
 int  peekc, lastc, ninbuf, io, oflag, nbra;
 unsigned nlall = 128;  unsigned int *zero;
 
-char  savedfile[FNSIZE], linebuf[LBSIZE], expbuf[ESIZE+4], genbuf[LBSIZE];
+char linebuf[LBSIZE], expbuf[ESIZE+4], genbuf[LBSIZE];
 char *nextip, line[70], *linp  = line, grepbuf[GBSIZE];
 
-int mflag = 0;
+int mflag = 0, match = 0;
 char* files[MAXFILE], *fname, *regex;
 
 int advance(char *lp, char *ep); int cclass(char *set, int c, int af);
