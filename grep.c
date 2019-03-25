@@ -11,8 +11,7 @@ DIR* dir;
 dirent* in_dir;
 
 int main(int argc, char *argv[]) {
-  if (argc < 3) {
-    puts_("Not enough arguments"); return 0; }
+  if (argc < 3) { puts_("Not enough arguments"); return 0; }
   regex = argv[1]; fname = argv[2];
   int nfiles = 0;
   if ((dir = opendir(fname)) != NULL) {
