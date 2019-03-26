@@ -17,11 +17,12 @@ int main(int argc, char *argv[]) {
 
   if ((dir = opendir(fname)) != NULL) { // opens directory if not null
     while((in_dir = readdir(dir)) != NULL) { // loops through files in directory
-      if (in_dir->d_name[0] != '.'  && in_dir->d_name[strlen(in_dir->d_name)-1] != '~') { // ignores hidden or temporary files
+      if (in_dir->d_name[0] != '.' && in_dir->d_name[strlen(in_dir->d_name)-1] != '~') { // ignores hidden or temporary files
         files[nfiles++] = in_dir->d_name; // stores the filename in files array and increment nfiles
       }
     }
     mflag = 1; // sets multiple files flag
+    closedir(dir); // close the directory just in case
   } else if (argc > 3) { // condition for multiple files
     files[0] = fname; // stores first file in the array
     mflag = 1; nfiles = 1; // set multiple files flag and increment nfiles
@@ -29,7 +30,6 @@ int main(int argc, char *argv[]) {
       files[nfiles++] = argv[i]; // loops through arguments and stores it in files array
     }
   }
-  closedir(dir); // close the directory just in case
   compile(regex); // compiles the regex string and puts it in expbuf
   if (mflag == 1) { // if multiple files flag is true
     for (int i = 0; i < nfiles; ++i) { // loops through the files array
@@ -137,7 +137,7 @@ int execute(void) {
 }
 // took first line from caseread
 // opens the file and store its content in genbuf
-void exfile(char* filename) {
+void exfile(const char* filename) {
   if ((io = open(filename, 0)) < 0) { puts_("Cannot open file"); exit(2);} // try to open file
   getfile(); close(io); io = -1; // get content from file and stores it in genbuf
 }

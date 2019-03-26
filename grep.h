@@ -16,13 +16,13 @@
 
 int  peekc, ninbuf, io, nbra;
 
-char linebuf[LBSIZE], expbuf[ESIZE+4], genbuf[LBSIZE];
-char *nextip, line[70], *linp  = line, *braslist[NBRA], *braelist[NBRA];
+char linebuf[LBSIZE], expbuf[ESIZE+4], genbuf[LBSIZE], *braslist[NBRA], *braelist[NBRA];
+char *nextip, line[70], *linp  = line, *loc1;
 
 int mflag = 0, match = 0;
 char* files[MAXFILE], *fname, *regex;
 
 int advance(char *lp, char *ep); int cclass(char *set, int c, int af);
 void commands(void); void compile(char* s); int execute(void); int getfile(void);
-void exfile(char* filename); void putchr_(int ac); void puts_(char *sp);
+void exfile(const char* filename); void putchr_(int ac); void puts_(char *sp);
 void putsf(char *sp); void search(void); int backref(int i, char *lp);
