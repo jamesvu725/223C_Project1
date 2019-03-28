@@ -34,11 +34,11 @@ int main(int argc, char *argv[]) {
   if (mflag == 1) { // if multiple files flag is true
     for (int i = 0; i < nfiles; ++i) { // loops through the files array
       fname = files[i]; // set fname to the file in files array
-      exfile(fname); // opens and read content from file and stores it in genbuf
+      exfile(fname); // opens and read content from file and stores it in filebuf
       search(); // search for regex in file and prints the lines that matches
     }
   } else {
-    exfile(fname); // opens and read content from file and stores it in genbuf
+    exfile(fname); // opens and read content from file and stores it in filebuf
     search(); // search for regex in file and prints the lines that matches
   }
   if (!match) { puts_("No matches found"); exit(1); } // prints no matches found if match flag is down
@@ -58,10 +58,10 @@ int advance(char *lp, char *ep) {  char *curlp;  int i;
       case CBRA:  braslist[(unsigned)*ep++] = lp; continue;
       case CKET:  braelist[(unsigned)*ep++] = lp; continue;
       case CBACK:
-        if (braelist[i = *ep++] == 0) { exit(2); }
+        if (braelist[i = *ep++] == 0) { puts_("Syntax Error"); exit(2); }
         if (backref(i, lp)) { lp += braelist[i] - braslist[i]; continue; } return(0);
       case CBACK|STAR:
-        if (braelist[i = *ep++] == 0) { exit(2); } curlp = lp;
+        if (braelist[i = *ep++] == 0) { puts_("Syntax Error"); exit(2); } curlp = lp;
         while (backref(i, lp)) { lp += braelist[i] - braslist[i]; }
         while (lp >= curlp) {
           if (advance(lp, ep)) { return(1); }
@@ -75,26 +75,30 @@ int advance(char *lp, char *ep) {  char *curlp;  int i;
       case NCCL|STAR:
         curlp = lp; while (cclass(ep, *lp++, ep[-1] == (CCL|STAR))) { } ep += *ep;
         do { lp--; if (advance(lp, ep)) { return(1); } } while (lp > curlp); return(0);
-      default: exit(2);
+      default: puts_("Syntax Error"); exit(2);
     }
   }
 }
+// original backref, used in advance
+int backref(int i, char *lp) {  char *bp;  bp = braslist[i];
+  while (*bp++ == *lp++) { if (bp >= braelist[i])   { return(1); } }  return(0);
+}
 // needed for regular expression
 int cclass(char *set, int c, int af) {
-  if (c == 0) { return 0; }
-  int n = *set++;
+  if (c == 0) { return 0; } int n = *set++;
   while (--n) { if (*set++ == c) { return(af); } } return(!af);
 }
 // editted so it doesn't use getchr and uses regex instead
-// removed goto statements
+// removed goto statements and \n statements since regex shouldn't have it
 // compiles the pattern or regular expression and puts it in expbuf
 void compile(char* s) {
   int c, cclcnt; nbra = 0;
-  char *ep = expbuf, *lastep, bracket[NBRA], *bracketp = bracket, *sp = s;
+  char *ep = expbuf, *lastep = 0, bracket[NBRA], *bracketp = bracket, *sp = s;
   if (*sp=='^') { ++sp;  *ep++ = CCIRC; }
   peekc = *sp;
   for (;;) {
-    c = *sp++; if (c == '\0') { *ep++ = CEOF; return; } lastep = ep;
+    c = *sp++; if (c == '\0') { *ep++ = CEOF; return; }
+    if (c != '*') { lastep = ep; }
     switch (c) {
     case '\\':
       if ((c = *sp++) == '(') {
@@ -136,19 +140,19 @@ int execute(void) {
   return(0);
 }
 // took first line from caseread
-// opens the file and store its content in genbuf
+// opens the file and store its content in filebuf
 void exfile(const char* filename) {
   if ((io = open(filename, 0)) < 0) { puts_("Cannot open file"); exit(2);} // try to open file
-  getfile(); close(io); io = -1; // get content from file and stores it in genbuf
+  getfile(); close(io); io = -1; // get content from file and stores it in filebuf
 }
-// get content from file and stores it in genbuf
+// get content from file and stores it in filebuf
 // original getfile, added clear buffer statements, removed a few statements
 int getfile(void) {  int c;  char *lp = linebuf, *fp = nextip;
-  memset(linebuf, 0, sizeof(linebuf)); memset(genbuf, 0, sizeof(genbuf)); // clear buffer
+  memset(linebuf, 0, sizeof(linebuf)); memset(filebuf, 0, sizeof(filebuf)); // clear buffer
   do {
     if (--ninbuf < 0) {
-      if ((ninbuf = (int)read(io, genbuf, LBSIZE)-1) < 0) { return(EOF); }
-      fp = genbuf;  while(fp < &genbuf[ninbuf]) {  if (*fp++ & 0200) { break; }  }  fp = genbuf;
+      if ((ninbuf = (int)read(io, filebuf, LBSIZE)-1) < 0) { return(EOF); }
+      fp = filebuf;  while(fp < &filebuf[ninbuf]) {  if (*fp++ & 0200) { break; }  }  fp = filebuf;
     }
     c = *fp++;  if (c=='\0') { continue; }
     *lp++ = c;
@@ -166,25 +170,20 @@ void putchr_(int ac) {
 void puts_(char *sp) { while (*sp) { putchr_(*sp++); } putchr_('\n'); }
 // prints out the string with colon at the end // for multiple files
 void putsf(char *sp) { while (*sp) { putchr_(*sp++); } putchr_(':'); }
-// used part of global and reworked to use genbuf and linebuf
+// used part of global and reworked to use filebuf and linebuf
 void search(void) {
-  char *gp = genbuf, *lp = linebuf; //
-  // loops through genbuf and copies each line to linebuf
+  char *fp = filebuf, *lp = linebuf; //
+  // loops through filebuf and copies each line to linebuf
   // searches for regex in linebuf and prints it out if found
-  while (*gp != '\0') { // while genbuf is not EOF
-    if (*gp == '\n') { // when genbuf hits newline, linebuf ends
-      *lp++ = '\0';
+  while (*fp != '\0') { // while filebuf is not EOF
+    if (*fp == '\n') { *lp++ = '\0';// when filebuf hits newline, linebuf ends
+      lp = linebuf; //sets lp back to the beginning of the buffer
       if (execute()) { // runs execute to find if linebuf has the pattern
         if (mflag) { putsf(fname); } // prints out filename: if multiple files
         puts_(linebuf); // prints out linebuf
         match = 1; // match flag set
       }
-      lp = linebuf; //sets lp back to the beginning of the buffer
-      ++gp; //goes to next character in genbuf
-    } else { *lp++ = *gp++; } // copies genbuf to linebuf
+      ++fp; //goes to next character in filebuf
+    } else { *lp++ = *fp++; } // copies filebuf to linebuf
   }
-}
-// original backref, used in advance
-int backref(int i, char *lp) {  char *bp;  bp = braslist[i];
-  while (*bp++ == *lp++) { if (bp >= braelist[i])   { return(1); } }  return(0);
 }

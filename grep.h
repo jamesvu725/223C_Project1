@@ -16,7 +16,7 @@
 
 int  peekc, ninbuf, io, nbra;
 
-char linebuf[LBSIZE], expbuf[ESIZE+4], genbuf[LBSIZE], *braslist[NBRA], *braelist[NBRA];
+char linebuf[LBSIZE], expbuf[ESIZE+4], filebuf[LBSIZE], *braslist[NBRA], *braelist[NBRA];
 char *nextip, line[70], *linp  = line, *loc1;
 
 int mflag = 0, match = 0;
